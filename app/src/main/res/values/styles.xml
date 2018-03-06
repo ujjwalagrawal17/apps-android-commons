@@ -47,4 +47,8 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="borderless_dialog2">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

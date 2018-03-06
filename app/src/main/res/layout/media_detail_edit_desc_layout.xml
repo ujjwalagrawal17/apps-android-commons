@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:minWidth="@dimen/bottom_peak_height"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:text="@string/media_detail_description"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="18dp"
+            />
+
+        <EditText
+            android:id="@+id/mediaDetailDescEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/media_detail_description"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="18dp"
+            />
+    </LinearLayout>
+        <Button
+            android:id="@+id/mediaDetailDescSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/accent"
+            android:text="Update"
+            android:textColor="@color/item_white_background"
+            android:textSize="18dp" />
+
+</LinearLayout>

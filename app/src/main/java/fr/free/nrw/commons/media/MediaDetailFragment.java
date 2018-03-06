@@ -1,5 +1,6 @@
 package fr.free.nrw.commons.media;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -11,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -32,8 +36,11 @@ import fr.free.nrw.commons.MediaDataExtractor;
 import fr.free.nrw.commons.MediaWikiImageView;
 import fr.free.nrw.commons.PageTitle;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.auth.SessionManager;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.location.LatLng;
+import fr.free.nrw.commons.mwapi.MediaWikiApi;
+import fr.free.nrw.commons.mwapi.UploadResult;
 import fr.free.nrw.commons.ui.widget.CompatTextView;
 import timber.log.Timber;
 
@@ -59,6 +66,8 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
         return mf;
     }
 
+    @Inject MediaWikiApi mwApi;
+    @Inject SessionManager sessionManager;
     @Inject
     Provider<MediaDataExtractor> mediaDataExtractorProvider;
 
@@ -66,8 +75,11 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
     private MediaDetailSpacer spacer;
     private int initialListTop = 0;
 
+    private static Dialog dialog;
+
     private TextView title;
     private TextView desc;
+    private ImageView editDescImageView;
     private TextView license;
     private TextView coordinates;
     private TextView uploadedDate;
@@ -121,6 +133,7 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
         spacer = (MediaDetailSpacer) view.findViewById(R.id.mediaDetailSpacer);
         title = (TextView) view.findViewById(R.id.mediaDetailTitle);
         desc = (TextView) view.findViewById(R.id.mediaDetailDesc);
+        editDescImageView = (ImageView) view.findViewById(R.id.mediaDetailEditDescImageView);
         license = (TextView) view.findViewById(R.id.mediaDetailLicense);
         coordinates = (TextView) view.findViewById(R.id.mediaDetailCoordinates);
         uploadedDate = (TextView) view.findViewById(R.id.mediaDetailuploadeddate);
@@ -259,6 +272,7 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
 
     private void setTextFields(Media media) {
         desc.setText(prettyDescription(media));
+
         license.setText(prettyLicense(media));
         coordinates.setText(prettyCoordinates(media));
         uploadedDate.setText(prettyUploadedDate(media));
@@ -285,6 +299,7 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
         if (media.getCoordinates() != null) {
             coordinates.setOnClickListener(v -> openMap(media.getCoordinates()));
         }
+        editDescImageView.setOnClickListener(v -> showEditDiscriptionDialog());
     }
 
     private void rebuildCatList() {
@@ -403,6 +418,44 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
 
     }
 
+
+    private void showEditDiscriptionDialog() {
+        dialog = new Dialog(getContext(), R.style.borderless_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.media_detail_edit_desc_layout);
+        final EditText descEditText = (EditText) dialog.findViewById(R.id.mediaDetailDescEditText);
+        final Button updateDesc = (Button) dialog.findViewById(R.id.mediaDetailDescSubmit);
+        descEditText.setText(desc.getText().toString());
+        updateDesc.setOnClickListener(v -> updateDescription(descEditText.getText().toString()));
+        dialog.show();
+    }
+
+    private void updateDescription(String updatedDesc) {
+
+        String editToken;
+        String authCookie = sessionManager.getAuthCookie();
+        if (isNullOrWhiteSpace(authCookie)) {
+            Timber.d("Could not authenticate :(");
+            return;
+        }
+
+        mwApi.setAuthCookie(authCookie);
+        try {
+            editToken = mwApi.getEditToken();
+        } catch (IOException e) {
+            Timber.d("Can not retreive edit token!");
+            return;
+        }
+        try {
+            String result  = mwApi.edit(editToken,"",title.getText().toString(),"");
+            Toast.makeText(getContext(),result,LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.cancel();
+    }
+
     private void openMap(LatLng coordinates) {
         //Open map app at given position
         Uri gmmIntentUri = Uri.parse(
@@ -413,4 +466,8 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
             startActivity(mapIntent);
         }
     }
+    private boolean isNullOrWhiteSpace(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
 }

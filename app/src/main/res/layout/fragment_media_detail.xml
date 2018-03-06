@@ -100,16 +100,36 @@
                         android:textSize="@dimen/normal_text"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/mediaDetailDesc"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
                         android:background="?attr/subBackground"
                         android:padding="@dimen/small_gap"
+                        android:layout_height="wrap_content"
+                        android:weightSum="10"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/mediaDetailDesc"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
                         android:text="@string/media_detail_description_explanation"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/description_text_size" />
+
+                    <ImageView
+                        android:id="@+id/mediaDetailEditDescImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_edit_grey_900_24dp"
+                        />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <fr.free.nrw.commons.media.MediaDetailSpacer
