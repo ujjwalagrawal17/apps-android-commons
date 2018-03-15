@@ -5,16 +5,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toolbar;
+
+import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.browse.categories.BrowseCategoryFragment;
 import fr.free.nrw.commons.browse.images.BrowseImageFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -22,12 +30,15 @@ import io.reactivex.disposables.Disposable;
  */
 
 public class BrowseActivity extends NavigationBaseActivity {
+
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    @BindView(R.id.searchBox)
+    EditText filter;
 
     ViewPagerAdapter viewPagerAdapter;
 
@@ -46,29 +57,28 @@ public class BrowseActivity extends NavigationBaseActivity {
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-//        refreshView();
         setTabs();
     }
 
-//    private void refreshView() {
-//
-//        progressBar.setVisibility(View.VISIBLE);
-//        browseDisposable = Observable.fromCallable(() -> nearbyController.loadAttractionsFromLocation(curLatLang, this))
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(this::populateTabs);
-//    }
 
     public void setTabs() {
         List<Fragment> fragmentList = new ArrayList<>();
         List<String> titleList = new ArrayList<>();
-        fragmentList.add(new BrowseImageFragment());
-        titleList.add("Images");
-        fragmentList.add(new BrowseImageFragment());
-        titleList.add("Category");
+        BrowseImageFragment browseImageFragment = new BrowseImageFragment();
+        BrowseCategoryFragment browseCategoryFragment = new BrowseCategoryFragment();
+        fragmentList.add(browseImageFragment);
+        titleList.add("IMAGES");
+        fragmentList.add(browseCategoryFragment);
+        titleList.add("CATEGORIES");
 
         viewPagerAdapter.setTabData(fragmentList, titleList);
         viewPagerAdapter.notifyDataSetChanged();
+        RxTextView.textChanges(filter)
+                .takeUntil(RxView.detaches(filter))
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(filter -> browseCategoryFragment.updateCategoryList(filter.toString()));
+
     }
 
     @Override

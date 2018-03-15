@@ -80,7 +80,7 @@
 
         <activity
             android:name=".browse.BrowseActivity"
-            android:label="@string/title_activity_about"
+            android:label="@string/title_activity_browse"
             android:parentActivityName=".contributions.ContributionsActivity" />
 
         <activity

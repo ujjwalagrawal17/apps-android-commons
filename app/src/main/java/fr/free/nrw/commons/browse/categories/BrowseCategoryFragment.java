@@ -4,24 +4,17 @@ package fr.free.nrw.commons.browse.categories;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.jakewharton.rxbinding2.view.RxView;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.pedrogomez.renderers.RVRendererAdapter;
 
 import java.util.ArrayList;
@@ -30,7 +23,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,11 +30,9 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.category.CategoryItem;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
 import fr.free.nrw.commons.upload.MwVolleyApi;
-import fr.free.nrw.commons.upload.SingleUploadFragment;
 import fr.free.nrw.commons.utils.StringSortingUtils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -55,38 +45,35 @@ import static android.view.KeyEvent.KEYCODE_BACK;
 /**
  * Displays the category suggestion and selection screen. Category search is initiated here.
  */
+
 public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
 
     public static final int SEARCH_CATS_LIMIT = 25;
 
     @BindView(R.id.categoriesListBox)
     RecyclerView categoriesList;
-    @BindView(R.id.categoriesSearchBox)
-    EditText categoriesFilter;
     @BindView(R.id.categoriesSearchInProgress)
     ProgressBar categoriesSearchInProgress;
     @BindView(R.id.categoriesNotFound)
     TextView categoriesNotFoundView;
-    @BindView(R.id.categoriesExplanation)
-    TextView categoriesSkip;
 
     @Inject MediaWikiApi mwApi;
     @Inject @Named("default_preferences") SharedPreferences prefs;
-    @Inject CategoryDao categoryDao;
+    @Inject BrowsedCategoryDao categoryDao;
 
-    private RVRendererAdapter<CategoryItem> categoriesAdapter;
-    private OnCategoriesSaveHandler onCategoriesSaveHandler;
+    private RVRendererAdapter<BrowsedCategoryItem> categoriesAdapter;
     private HashMap<String, ArrayList<String>> categoriesCache;
-    private List<CategoryItem> selectedCategories = new ArrayList<>();
-    private TitleTextWatcher textWatcher = new TitleTextWatcher();
+    private List<BrowsedCategoryItem> selectedCategories = new ArrayList<>();
 
-    private final CategoriesAdapterFactory adapterFactory = new CategoriesAdapterFactory(item -> {
-        if (item.isSelected()) {
-            selectedCategories.add(item);
-            updateCategoryCount(item);
-        } else {
-            selectedCategories.remove(item);
-        }
+    private final BrowseCategoriesAdapterFactory adapterFactory = new BrowseCategoriesAdapterFactory(item -> {
+
+        Toast.makeText(getContext(),"Add category to recently searched category db table and move to Category Details Activity ",Toast.LENGTH_LONG).show();
+//        if (item.isSelected()) {
+//            selectedCategories.add(item);
+//            updateCategoryCount(item);
+//        } else {
+//            selectedCategories.remove(item);
+//        }
     });
 
     @Override
@@ -97,7 +84,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
 
         categoriesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ArrayList<CategoryItem> items = new ArrayList<>();
+        ArrayList<BrowsedCategoryItem> items = new ArrayList<>();
         categoriesCache = new HashMap<>();
         if (savedInstanceState != null) {
             items.addAll(savedInstanceState.getParcelableArrayList("currentCategories"));
@@ -110,19 +97,20 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
         categoriesList.setAdapter(categoriesAdapter);
 
 
-        categoriesFilter.addTextChangedListener(textWatcher);
+//        categoriesFilter.addTextChangedListener(textWatcher);
+//
+//        categoriesFilter.setOnFocusChangeListener((v, hasFocus) -> {
+//            if (!hasFocus) {
+//                hideKeyboard(v);
+//            }
+//        });
 
-        categoriesFilter.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                hideKeyboard(v);
-            }
-        });
+//        RxTextView.textChanges(categoriesFilter)
+//                .takeUntil(RxView.detaches(categoriesFilter))
+//                .debounce(500, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(filter -> updateCategoryList(filter.toString()));
 
-        RxTextView.textChanges(categoriesFilter)
-                .takeUntil(RxView.detaches(categoriesFilter))
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(filter -> updateCategoryList(filter.toString()));
         return rootView;
     }
 
@@ -131,42 +119,29 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    @Override
-    public void onDestroyView() {
-        categoriesFilter.removeTextChangedListener(textWatcher);
-        super.onDestroyView();
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.fragment_categorization, menu);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        View rootView = getView();
-        if (rootView != null) {
-            rootView.setFocusableInTouchMode(true);
-            rootView.requestFocus();
-            rootView.setOnKeyListener((v, keyCode, event) -> {
-                if (event.getAction() == ACTION_UP && keyCode == KEYCODE_BACK) {
-                    showBackButtonDialog();
-                    return true;
-                }
-                return false;
-            });
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        View rootView = getView();
+//        if (rootView != null) {
+//            rootView.setFocusableInTouchMode(true);
+//            rootView.requestFocus();
+//            rootView.setOnKeyListener((v, keyCode, event) -> {
+//                if (event.getAction() == ACTION_UP && keyCode == KEYCODE_BACK) {
+////                    showBackButtonDialog();
+//                    return true;
+//                }
+//                return false;
+//            });
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         int itemCount = categoriesAdapter.getItemCount();
-        ArrayList<CategoryItem> items = new ArrayList<>(itemCount);
+        ArrayList<BrowsedCategoryItem> items = new ArrayList<>(itemCount);
         for (int i = 0; i < itemCount; i++) {
             items.add(categoriesAdapter.getItem(i));
         }
@@ -174,7 +149,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
         outState.putSerializable("categoriesCache", categoriesCache);
     }
 
-    private void updateCategoryList(String filter) {
+    public void updateCategoryList(String filter) {
         Observable.fromIterable(selectedCategories)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -205,7 +180,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                                 // There are no suggestions
                                 if (TextUtils.isEmpty(filter)) {
                                     // Allow to send image with no categories
-                                    categoriesSkip.setVisibility(View.VISIBLE);
+//                                    categoriesSkip.setVisibility(View.VISIBLE);
                                 } else {
                                     // Inform the user that the searched term matches  no category
                                     categoriesNotFoundView.setText(getString(R.string.categories_not_found, filter));
@@ -216,48 +191,48 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                 );
     }
 
-    private Comparator<CategoryItem> sortBySimilarity(final String filter) {
+    private Comparator<BrowsedCategoryItem> sortBySimilarity(final String filter) {
         Comparator<String> stringSimilarityComparator = StringSortingUtils.sortBySimilarity(filter);
         return (firstItem, secondItem) -> stringSimilarityComparator
                 .compare(firstItem.getName(), secondItem.getName());
     }
 
-    private List<String> getStringList(List<CategoryItem> input) {
+    private List<String> getStringList(List<BrowsedCategoryItem> input) {
         List<String> output = new ArrayList<>();
-        for (CategoryItem item : input) {
+        for (BrowsedCategoryItem item : input) {
             output.add(item.getName());
         }
         return output;
     }
 
-    private Observable<CategoryItem> defaultCategories() {
+    private Observable<BrowsedCategoryItem> defaultCategories() {
         return gpsCategories()
                 .concatWith(titleCategories())
                 .concatWith(recentCategories());
     }
 
-    private Observable<CategoryItem> gpsCategories() {
+    private Observable<BrowsedCategoryItem> gpsCategories() {
         return Observable.fromIterable(
                 MwVolleyApi.GpsCatExists.getGpsCatExists()
                         ? MwVolleyApi.getGpsCat() : new ArrayList<>())
-                .map(name -> new CategoryItem(name, false));
+                .map(name -> new BrowsedCategoryItem(name,false));
     }
 
-    private Observable<CategoryItem> titleCategories() {
+    private Observable<BrowsedCategoryItem> titleCategories() {
         //Retrieve the title that was saved when user tapped submit icon
         String title = prefs.getString("Title", "");
 
         return mwApi
                 .searchTitles(title, SEARCH_CATS_LIMIT)
-                .map(name -> new CategoryItem(name, false));
+                .map(name -> new BrowsedCategoryItem(name,false));
     }
 
-    private Observable<CategoryItem> recentCategories() {
+    private Observable<BrowsedCategoryItem> recentCategories() {
         return Observable.fromIterable(categoryDao.recentCategories(SEARCH_CATS_LIMIT))
-                .map(s -> new CategoryItem(s, false));
+                .map(s -> new BrowsedCategoryItem(s,false));
     }
 
-    private Observable<CategoryItem> searchAll(String term) {
+    private Observable<BrowsedCategoryItem> searchAll(String term) {
         //If user hasn't typed anything in yet, get GPS and recent items
         if (TextUtils.isEmpty(term)) {
             return Observable.empty();
@@ -266,16 +241,16 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
         //if user types in something that is in cache, return cached category
         if (categoriesCache.containsKey(term)) {
             return Observable.fromIterable(categoriesCache.get(term))
-                    .map(name -> new CategoryItem(name, false));
+                    .map(name -> new BrowsedCategoryItem(name,false));
         }
 
         //otherwise, search API for matching categories
         return mwApi
                 .allCategories(term, SEARCH_CATS_LIMIT)
-                .map(name -> new CategoryItem(name, false));
+                .map(name -> new BrowsedCategoryItem(name,false));
     }
 
-    private Observable<CategoryItem> searchCategories(String term) {
+    private Observable<BrowsedCategoryItem> searchCategories(String term) {
         //If user hasn't typed anything in yet, get GPS and recent items
         if (TextUtils.isEmpty(term)) {
             return Observable.empty();
@@ -283,7 +258,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
 
         return mwApi
                 .searchCategories(term, SEARCH_CATS_LIMIT)
-                .map(s -> new CategoryItem(s, false));
+                .map(s -> new BrowsedCategoryItem(s,false));
     }
 
     private boolean containsYear(String item) {
@@ -305,12 +280,12 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                 || (item.matches(".*0s.*") && !item.matches(".*(200|201)0s.*")));
     }
 
-    private void updateCategoryCount(CategoryItem item) {
-        Category category = categoryDao.find(item.getName());
+    private void updateCategoryCount(BrowsedCategoryItem item) {
+        BrowsedCategory category = categoryDao.find(item.getName());
 
         // Newly used category...
         if (category == null) {
-            category = new Category(null, item.getName(), new Date(), 0);
+            category = new BrowsedCategory(null, item.getName(), new Date(), 0);
         }
 
         category.incTimesUsed();
@@ -324,50 +299,6 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
     /**
      * Show dialog asking for confirmation to leave without saving categories.
      */
-    public void showBackButtonDialog() {
-        new AlertDialog.Builder(getActivity())
-                .setMessage("Are you sure you want to go back? The image will not "
-                        + "have any categories saved.")
-                .setTitle("Warning")
-                .setPositiveButton("No", (dialog, id) -> {
-                    //No need to do anything, user remains on categorization screen
-                })
-                .setNegativeButton("Yes", (dialog, id) -> getActivity().finish())
-                .create()
-                .show();
-    }
 
-    private void showConfirmationDialog() {
-        new AlertDialog.Builder(getActivity())
-                .setMessage("Images without categories are rarely usable. "
-                        + "Are you sure you want to submit without selecting "
-                        + "categories?")
-                .setTitle("No Categories Selected")
-                .setPositiveButton("No, go back", (dialog, id) -> {
-                    //Exit menuItem so user can select their categories
-                })
-                .setNegativeButton("Yes, submit", (dialog, id) -> {
-                    //Proceed to submission
-                    onCategoriesSaveHandler.onCategoriesSave(getStringList(selectedCategories));
-                })
-                .create()
-                .show();
-    }
 
-    private class TitleTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (getActivity() != null) {
-                getActivity().invalidateOptionsMenu();
-            }
-        }
-    }
 }

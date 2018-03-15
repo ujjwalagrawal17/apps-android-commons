@@ -88,6 +88,7 @@
   <string name="about_privacy_policy"><![CDATA[<u>Privacy policy</u>]]></string>
   <string name="about_credits"><![CDATA[<u>Credits</u>]]></string>
   <string name="title_activity_about">About</string>
+  <string name="title_activity_browse">Browse</string>
   <string name="menu_feedback">Send Feedback (via Email)</string>
   <string name="no_email_client">No email client installed</string>
   <string name="provider_categories">Recently used categories</string>
@@ -246,4 +247,5 @@
   <string name="about_faq">Frequently Asked Questions</string>
   <string name="welcome_skip_button">Skip Tutorial</string>
     <string name="navigation_item_browse">Browse</string>
+    <string name="browse">Browse</string>
 </resources>

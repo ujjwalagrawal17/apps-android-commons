@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/action_browse"
-        android:icon="@drawable/ic_location_black_24dp"
+        android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/navigation_item_browse"/>
 
     <item

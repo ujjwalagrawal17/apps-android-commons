@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.category;
+package fr.free.nrw.commons.browse.categories;
 
 import android.net.Uri;
 
@@ -7,16 +7,16 @@ import java.util.Date;
 /**
  * Represents a category
  */
-class Category {
+public class BrowsedCategory {
     private Uri contentUri;
     private String name;
     private Date lastUsed;
     private int timesUsed;
 
-    public Category() {
+    public BrowsedCategory() {
     }
 
-    Category(Uri contentUri, String name, Date lastUsed, int timesUsed) {
+    public BrowsedCategory(Uri contentUri, String name, Date lastUsed, int timesUsed) {
         this.contentUri = contentUri;
         this.name = name;
         this.lastUsed = lastUsed;

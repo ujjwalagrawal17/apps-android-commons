@@ -7,21 +7,19 @@ import com.pedrogomez.renderers.RendererBuilder;
 import java.util.Collections;
 import java.util.List;
 
-import fr.free.nrw.commons.category.CategoriesRenderer;
-import fr.free.nrw.commons.category.CategoryItem;
 
 class BrowseCategoriesAdapterFactory {
-    private final CategoriesRenderer.CategoryClickedListener listener;
+    private final BrowseCategoriesRenderer.CategoryClickedListener listener;
 
-    BrowseCategoriesAdapterFactory(CategoriesRenderer.CategoryClickedListener listener) {
+    BrowseCategoriesAdapterFactory(BrowseCategoriesRenderer.CategoryClickedListener listener) {
         this.listener = listener;
     }
 
-    public RVRendererAdapter<CategoryItem> create(List<CategoryItem> placeList) {
-        RendererBuilder<CategoryItem> builder = new RendererBuilder<CategoryItem>()
-                .bind(CategoryItem.class, new CategoriesRenderer(listener));
-        ListAdapteeCollection<CategoryItem> collection = new ListAdapteeCollection<>(
-                placeList != null ? placeList : Collections.<CategoryItem>emptyList());
+    public RVRendererAdapter<BrowsedCategoryItem> create(List<BrowsedCategoryItem> placeList) {
+        RendererBuilder<BrowsedCategoryItem> builder = new RendererBuilder<BrowsedCategoryItem>()
+                .bind(BrowsedCategoryItem.class, new BrowseCategoriesRenderer(listener));
+        ListAdapteeCollection<BrowsedCategoryItem> collection = new ListAdapteeCollection<>(
+                placeList != null ? placeList : Collections.<BrowsedCategoryItem>emptyList());
         return new RVRendererAdapter<>(builder, collection);
     }
 }

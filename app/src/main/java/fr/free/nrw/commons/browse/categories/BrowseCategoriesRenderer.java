@@ -3,20 +3,20 @@ package fr.free.nrw.commons.browse.categories;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import com.pedrogomez.renderers.Renderer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.category.CategoryItem;
 
-class CategoriesRenderer extends Renderer<CategoryItem> {
-    @BindView(R.id.tvName) CheckedTextView checkedView;
+class BrowseCategoriesRenderer extends Renderer<BrowsedCategoryItem> {
+    @BindView(R.id.tvCategoryName)
+    TextView tvCategoryName;
     private final CategoryClickedListener listener;
 
-    CategoriesRenderer(CategoryClickedListener listener) {
+    BrowseCategoriesRenderer(CategoryClickedListener listener) {
         this.listener = listener;
     }
 
@@ -33,9 +33,7 @@ class CategoriesRenderer extends Renderer<CategoryItem> {
     @Override
     protected void hookListeners(View view) {
         view.setOnClickListener(v -> {
-            CategoryItem item = getContent();
-            item.setSelected(!item.isSelected());
-            checkedView.setChecked(item.isSelected());
+            BrowsedCategoryItem item = getContent();
             if (listener != null) {
                 listener.categoryClicked(item);
             }
@@ -44,12 +42,11 @@ class CategoriesRenderer extends Renderer<CategoryItem> {
 
     @Override
     public void render() {
-        CategoryItem item = getContent();
-        checkedView.setChecked(item.isSelected());
-        checkedView.setText(item.getName());
+        BrowsedCategoryItem item = getContent();
+        tvCategoryName.setText(item.getName());
     }
 
     interface CategoryClickedListener {
-        void categoryClicked(CategoryItem item);
+        void categoryClicked(BrowsedCategoryItem item);
     }
 }

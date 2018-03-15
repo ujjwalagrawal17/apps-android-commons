@@ -1,30 +1,30 @@
-package fr.free.nrw.commons.category;
+package fr.free.nrw.commons.browse.categories;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-class CategoryItem implements Parcelable {
+public class BrowsedCategoryItem implements Parcelable {
     private final String name;
     private boolean selected;
 
-    public static Creator<CategoryItem> CREATOR = new Creator<CategoryItem>() {
+    public static Creator<BrowsedCategoryItem> CREATOR = new Creator<BrowsedCategoryItem>() {
         @Override
-        public CategoryItem createFromParcel(Parcel parcel) {
-            return new CategoryItem(parcel);
+        public BrowsedCategoryItem createFromParcel(Parcel parcel) {
+            return new BrowsedCategoryItem(parcel);
         }
 
         @Override
-        public CategoryItem[] newArray(int i) {
-            return new CategoryItem[0];
+        public BrowsedCategoryItem[] newArray(int i) {
+            return new BrowsedCategoryItem[0];
         }
     };
 
-    CategoryItem(String name, boolean selected) {
+    public BrowsedCategoryItem(String name, boolean selected) {
         this.name = name;
         this.selected = selected;
     }
 
-    private CategoryItem(Parcel in) {
+    private BrowsedCategoryItem(Parcel in) {
         name = in.readString();
         selected = in.readInt() == 1;
     }
@@ -61,7 +61,7 @@ class CategoryItem implements Parcelable {
             return false;
         }
 
-        CategoryItem that = (CategoryItem) o;
+        BrowsedCategoryItem that = (BrowsedCategoryItem) o;
 
         return name.equals(that.name);
 

@@ -17,55 +17,37 @@
 
             <include
                 android:id="@+id/toolbar"
+                android:visibility="gone"
                 layout="@layout/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
+            <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
-                android:id="@+id/search_layout"
-                android:orientation="vertical"
-                android:layout_below="@id/toolbar"
-                android:background="@color/primaryDarkColor"
+                app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+                android:background="@color/item_white_background"
                 android:layout_height="wrap_content">
-                <RelativeLayout
+                <EditText
+                    android:id="@+id/searchBox"
+                    android:background="@null"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="6dp"
-                    android:background="@color/item_white_background"
-                    android:padding="4dp"
-                    >
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/primaryDarkColor"
+                    android:textColor="@color/primaryDarkColor"
+                    android:hint="Search"
+                    android:textSize="@dimen/normal_text"
+                    />
 
-                    <ImageView
-                        android:id="@+id/imageView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="11dp"
-                        android:layout_marginRight="11dp"
-                        android:src="@drawable/ic_search_black_24dp" />
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:hint="Search Images / Categories on Commons"
-                        android:textColor="@color/accent"
-                        android:layout_toLeftOf="@id/imageView1"
-                        android:maxLines="1"
-                        />
-
-                </RelativeLayout>
-            </LinearLayout>
+            </android.support.v7.widget.Toolbar>
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="bottom"
                 app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-                android:background="@color/primaryDarkColor"
+                android:background="@color/item_white_background"
                 app:tabMode="scrollable"
-                android:layout_below="@id/search_layout"
+                app:tabSelectedTextColor="@color/button_background_dark"
+                android:layout_below="@id/searchBox"
                 />
 
         </android.support.design.widget.AppBarLayout>

@@ -102,7 +102,7 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
         categoriesCache = new HashMap<>();
         if (savedInstanceState != null) {
             items.addAll(savedInstanceState.getParcelableArrayList("currentCategories"));
-            // noinspection unchecked
+            //noinspection unchecked
             categoriesCache.putAll((HashMap<String, ArrayList<String>>) savedInstanceState
                     .getSerializable("categoriesCache"));
         }
