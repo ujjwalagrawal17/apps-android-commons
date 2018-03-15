@@ -27,6 +27,7 @@ import fr.free.nrw.commons.Utils;
 import fr.free.nrw.commons.WelcomeActivity;
 import fr.free.nrw.commons.auth.AccountUtil;
 import fr.free.nrw.commons.auth.LoginActivity;
+import fr.free.nrw.commons.browse.BrowseActivity;
 import fr.free.nrw.commons.contributions.ContributionsActivity;
 import fr.free.nrw.commons.nearby.NearbyActivity;
 import fr.free.nrw.commons.notification.NotificationActivity;
@@ -106,6 +107,10 @@ public abstract class NavigationBaseActivity extends BaseActivity
             case R.id.action_nearby:
                 drawerLayout.closeDrawer(navigationView);
                 startActivityWithFlags(this, NearbyActivity.class, Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                return true;
+            case R.id.action_browse:
+                drawerLayout.closeDrawer(navigationView);
+                startActivityWithFlags(this, BrowseActivity.class, Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 return true;
             case R.id.action_about:
                 drawerLayout.closeDrawer(navigationView);

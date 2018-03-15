@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.category;
+package fr.free.nrw.commons.browse.categories;
 
 
 import android.app.Activity;
@@ -10,11 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -40,6 +38,7 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.category.CategoryItem;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
 import fr.free.nrw.commons.upload.MwVolleyApi;
@@ -56,7 +55,7 @@ import static android.view.KeyEvent.KEYCODE_BACK;
 /**
  * Displays the category suggestion and selection screen. Category search is initiated here.
  */
-public class CategorizationFragment extends CommonsDaggerSupportFragment {
+public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
 
     public static final int SEARCH_CATS_LIMIT = 25;
 
@@ -93,7 +92,7 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_categorization, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_browse_category, container, false);
         ButterKnife.bind(this, rootView);
 
         categoriesList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -175,31 +174,6 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
         outState.putSerializable("categoriesCache", categoriesCache);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.menu_save_categories:
-                if (selectedCategories.size() > 0) {
-                    //Some categories selected, proceed to submission
-                    onCategoriesSaveHandler.onCategoriesSave(getStringList(selectedCategories));
-                } else {
-                    //No categories selected, prompt the user to select some
-                    showConfirmationDialog();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(menuItem);
-        }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-        onCategoriesSaveHandler = (OnCategoriesSaveHandler) getActivity();
-        getActivity().setTitle(R.string.categories_activity_title);
-    }
-
     private void updateCategoryList(String filter) {
         Observable.fromIterable(selectedCategories)
                 .subscribeOn(Schedulers.io())
@@ -207,15 +181,14 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
                 .doOnSubscribe(disposable -> {
                     categoriesSearchInProgress.setVisibility(View.VISIBLE);
                     categoriesNotFoundView.setVisibility(View.GONE);
-                    categoriesSkip.setVisibility(View.GONE);
                     categoriesAdapter.clear();
                 })
                 .observeOn(Schedulers.io())
                 .concatWith(
                         searchAll(filter)
-                                .mergeWith(searchCategories(filter))
-                                .concatWith(TextUtils.isEmpty(filter)
-                                        ? defaultCategories() : Observable.empty())
+                        .mergeWith(searchCategories(filter))
+                        .concatWith(TextUtils.isEmpty(filter)
+                        ? defaultCategories() : Observable.empty())
                 )
                 .filter(categoryItem -> !containsYear(categoryItem.getName()))
                 .distinct()
@@ -223,7 +196,7 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         s -> categoriesAdapter.add(s),
-                         Timber::e,
+                        Timber::e,
                         () -> {
                             categoriesAdapter.notifyDataSetChanged();
                             categoriesSearchInProgress.setVisibility(View.GONE);

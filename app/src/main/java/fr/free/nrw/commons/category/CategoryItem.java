@@ -3,7 +3,7 @@ package fr.free.nrw.commons.category;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-class CategoryItem implements Parcelable {
+public class CategoryItem implements Parcelable {
     private final String name;
     private boolean selected;
 
@@ -19,7 +19,7 @@ class CategoryItem implements Parcelable {
         }
     };
 
-    CategoryItem(String name, boolean selected) {
+    public CategoryItem(String name, boolean selected) {
         this.name = name;
         this.selected = selected;
     }

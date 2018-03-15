@@ -79,6 +79,11 @@
             android:parentActivityName=".contributions.ContributionsActivity" />
 
         <activity
+            android:name=".browse.BrowseActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".contributions.ContributionsActivity" />
+
+        <activity
             android:name=".auth.SignupActivity"
             android:label="@string/title_activity_signup" />
 

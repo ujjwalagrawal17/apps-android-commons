@@ -2,6 +2,7 @@ package fr.free.nrw.commons.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
+import fr.free.nrw.commons.browse.images.BrowseImageFragment;
 import fr.free.nrw.commons.category.CategorizationFragment;
 import fr.free.nrw.commons.contributions.ContributionsListFragment;
 import fr.free.nrw.commons.media.MediaDetailFragment;
@@ -43,4 +44,6 @@ public abstract class FragmentBuilderModule {
     @ContributesAndroidInjector
     abstract SingleUploadFragment bindSingleUploadFragment();
 
+    @ContributesAndroidInjector
+    abstract BrowseImageFragment bindBrowseImageFragment();
 }
