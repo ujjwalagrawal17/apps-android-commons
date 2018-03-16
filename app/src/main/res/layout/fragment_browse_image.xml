@@ -1,11 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
+    android:paddingTop="@dimen/small_gap"
     >
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_centerInParent="true"
+        android:id="@+id/categoriesNotFound"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World"/>
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/categoriesSearchInProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/categoriesListBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none" />
 </RelativeLayout>

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import fr.free.nrw.commons.browse.categories.BrowsedCategoryDao;
 import fr.free.nrw.commons.category.CategoryDao;
 import fr.free.nrw.commons.contributions.ContributionDao;
 import fr.free.nrw.commons.modifications.ModifierSequenceDao;
@@ -27,7 +26,6 @@ public class DBOpenHelper  extends SQLiteOpenHelper {
         ContributionDao.Table.onCreate(sqLiteDatabase);
         ModifierSequenceDao.Table.onCreate(sqLiteDatabase);
         CategoryDao.Table.onCreate(sqLiteDatabase);
-        BrowsedCategoryDao.Table.onCreate(sqLiteDatabase);
     }
 
     @Override
@@ -35,6 +33,5 @@ public class DBOpenHelper  extends SQLiteOpenHelper {
         ContributionDao.Table.onUpdate(sqLiteDatabase, from, to);
         ModifierSequenceDao.Table.onUpdate(sqLiteDatabase, from, to);
         CategoryDao.Table.onUpdate(sqLiteDatabase, from, to);
-        BrowsedCategoryDao.Table.onUpdate(sqLiteDatabase, from, to);
     }
 }

@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toolbar;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -77,7 +76,11 @@ public class BrowseActivity extends NavigationBaseActivity {
                 .takeUntil(RxView.detaches(filter))
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(filter -> browseCategoryFragment.updateCategoryList(filter.toString()));
+                .subscribe( filter -> {
+                        browseImageFragment.updateCategoryList(filter.toString());
+                        browseCategoryFragment.updateCategoryList(filter.toString());
+                        }
+                        );
 
     }
 

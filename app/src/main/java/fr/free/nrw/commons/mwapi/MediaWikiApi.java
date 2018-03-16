@@ -48,6 +48,9 @@ public interface MediaWikiApi {
     Observable<String> allCategories(String filter, int searchCatsLimit);
 
     @NonNull
+    Observable<String> searchImages(String title, int searchCatsLimit);
+
+    @NonNull
     List<Notification> getNotifications() throws IOException;
 
     @NonNull

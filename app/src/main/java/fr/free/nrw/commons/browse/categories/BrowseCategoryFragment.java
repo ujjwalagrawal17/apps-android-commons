@@ -1,7 +1,6 @@
 package fr.free.nrw.commons.browse.categories;
 
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +9,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,9 +16,7 @@ import android.widget.Toast;
 import com.pedrogomez.renderers.RVRendererAdapter;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,15 +28,11 @@ import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
-import fr.free.nrw.commons.upload.MwVolleyApi;
 import fr.free.nrw.commons.utils.StringSortingUtils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static android.view.KeyEvent.ACTION_UP;
-import static android.view.KeyEvent.KEYCODE_BACK;
 
 /**
  * Displays the category suggestion and selection screen. Category search is initiated here.
@@ -59,7 +51,6 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
 
     @Inject MediaWikiApi mwApi;
     @Inject @Named("default_preferences") SharedPreferences prefs;
-    @Inject BrowsedCategoryDao categoryDao;
 
     private RVRendererAdapter<BrowsedCategoryItem> categoriesAdapter;
     private HashMap<String, ArrayList<String>> categoriesCache;
@@ -68,12 +59,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
     private final BrowseCategoriesAdapterFactory adapterFactory = new BrowseCategoriesAdapterFactory(item -> {
 
         Toast.makeText(getContext(),"Add category to recently searched category db table and move to Category Details Activity ",Toast.LENGTH_LONG).show();
-//        if (item.isSelected()) {
-//            selectedCategories.add(item);
-//            updateCategoryCount(item);
-//        } else {
-//            selectedCategories.remove(item);
-//        }
+
     });
 
     @Override
@@ -85,68 +71,11 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
         categoriesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ArrayList<BrowsedCategoryItem> items = new ArrayList<>();
-        categoriesCache = new HashMap<>();
-        if (savedInstanceState != null) {
-            items.addAll(savedInstanceState.getParcelableArrayList("currentCategories"));
-            // noinspection unchecked
-            categoriesCache.putAll((HashMap<String, ArrayList<String>>) savedInstanceState
-                    .getSerializable("categoriesCache"));
-        }
 
         categoriesAdapter = adapterFactory.create(items);
         categoriesList.setAdapter(categoriesAdapter);
 
-
-//        categoriesFilter.addTextChangedListener(textWatcher);
-//
-//        categoriesFilter.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) {
-//                hideKeyboard(v);
-//            }
-//        });
-
-//        RxTextView.textChanges(categoriesFilter)
-//                .takeUntil(RxView.detaches(categoriesFilter))
-//                .debounce(500, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(filter -> updateCategoryList(filter.toString()));
-
         return rootView;
-    }
-
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        View rootView = getView();
-//        if (rootView != null) {
-//            rootView.setFocusableInTouchMode(true);
-//            rootView.requestFocus();
-//            rootView.setOnKeyListener((v, keyCode, event) -> {
-//                if (event.getAction() == ACTION_UP && keyCode == KEYCODE_BACK) {
-////                    showBackButtonDialog();
-//                    return true;
-//                }
-//                return false;
-//            });
-//        }
-//    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        int itemCount = categoriesAdapter.getItemCount();
-        ArrayList<BrowsedCategoryItem> items = new ArrayList<>(itemCount);
-        for (int i = 0; i < itemCount; i++) {
-            items.add(categoriesAdapter.getItem(i));
-        }
-        outState.putParcelableArrayList("currentCategories", items);
-        outState.putSerializable("categoriesCache", categoriesCache);
     }
 
     public void updateCategoryList(String filter) {
@@ -160,12 +89,8 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                 })
                 .observeOn(Schedulers.io())
                 .concatWith(
-                        searchAll(filter)
-                        .mergeWith(searchCategories(filter))
-                        .concatWith(TextUtils.isEmpty(filter)
-                        ? defaultCategories() : Observable.empty())
+                        searchCategories(filter)
                 )
-                .filter(categoryItem -> !containsYear(categoryItem.getName()))
                 .distinct()
                 .sorted(sortBySimilarity(filter))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -179,8 +104,7 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                             if (categoriesAdapter.getItemCount() == selectedCategories.size()) {
                                 // There are no suggestions
                                 if (TextUtils.isEmpty(filter)) {
-                                    // Allow to send image with no categories
-//                                    categoriesSkip.setVisibility(View.VISIBLE);
+
                                 } else {
                                     // Inform the user that the searched term matches  no category
                                     categoriesNotFoundView.setText(getString(R.string.categories_not_found, filter));
@@ -197,59 +121,6 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                 .compare(firstItem.getName(), secondItem.getName());
     }
 
-    private List<String> getStringList(List<BrowsedCategoryItem> input) {
-        List<String> output = new ArrayList<>();
-        for (BrowsedCategoryItem item : input) {
-            output.add(item.getName());
-        }
-        return output;
-    }
-
-    private Observable<BrowsedCategoryItem> defaultCategories() {
-        return gpsCategories()
-                .concatWith(titleCategories())
-                .concatWith(recentCategories());
-    }
-
-    private Observable<BrowsedCategoryItem> gpsCategories() {
-        return Observable.fromIterable(
-                MwVolleyApi.GpsCatExists.getGpsCatExists()
-                        ? MwVolleyApi.getGpsCat() : new ArrayList<>())
-                .map(name -> new BrowsedCategoryItem(name,false));
-    }
-
-    private Observable<BrowsedCategoryItem> titleCategories() {
-        //Retrieve the title that was saved when user tapped submit icon
-        String title = prefs.getString("Title", "");
-
-        return mwApi
-                .searchTitles(title, SEARCH_CATS_LIMIT)
-                .map(name -> new BrowsedCategoryItem(name,false));
-    }
-
-    private Observable<BrowsedCategoryItem> recentCategories() {
-        return Observable.fromIterable(categoryDao.recentCategories(SEARCH_CATS_LIMIT))
-                .map(s -> new BrowsedCategoryItem(s,false));
-    }
-
-    private Observable<BrowsedCategoryItem> searchAll(String term) {
-        //If user hasn't typed anything in yet, get GPS and recent items
-        if (TextUtils.isEmpty(term)) {
-            return Observable.empty();
-        }
-
-        //if user types in something that is in cache, return cached category
-        if (categoriesCache.containsKey(term)) {
-            return Observable.fromIterable(categoriesCache.get(term))
-                    .map(name -> new BrowsedCategoryItem(name,false));
-        }
-
-        //otherwise, search API for matching categories
-        return mwApi
-                .allCategories(term, SEARCH_CATS_LIMIT)
-                .map(name -> new BrowsedCategoryItem(name,false));
-    }
-
     private Observable<BrowsedCategoryItem> searchCategories(String term) {
         //If user hasn't typed anything in yet, get GPS and recent items
         if (TextUtils.isEmpty(term)) {
@@ -260,45 +131,5 @@ public class BrowseCategoryFragment extends CommonsDaggerSupportFragment {
                 .searchCategories(term, SEARCH_CATS_LIMIT)
                 .map(s -> new BrowsedCategoryItem(s,false));
     }
-
-    private boolean containsYear(String item) {
-        //Check for current and previous year to exclude these categories from removal
-        Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.YEAR);
-        String yearInString = String.valueOf(year);
-
-        int prevYear = year - 1;
-        String prevYearInString = String.valueOf(prevYear);
-        Timber.d("Previous year: %s", prevYearInString);
-
-        //Check if item contains a 4-digit word anywhere within the string (.* is wildcard)
-        //And that item does not equal the current year or previous year
-        //And if it is an irrelevant category such as Media_needing_categories_as_of_16_June_2017(Issue #750)
-        //Check if the year in the form of XX(X)0s is relevant, i.e. in the 2000s or 2010s as stated in Issue #1029
-        return ((item.matches(".*(19|20)\\d{2}.*") && !item.contains(yearInString) && !item.contains(prevYearInString))
-                || item.matches("(.*)needing(.*)") || item.matches("(.*)taken on(.*)")
-                || (item.matches(".*0s.*") && !item.matches(".*(200|201)0s.*")));
-    }
-
-    private void updateCategoryCount(BrowsedCategoryItem item) {
-        BrowsedCategory category = categoryDao.find(item.getName());
-
-        // Newly used category...
-        if (category == null) {
-            category = new BrowsedCategory(null, item.getName(), new Date(), 0);
-        }
-
-        category.incTimesUsed();
-        categoryDao.save(category);
-    }
-
-    public int getCurrentSelectedCount() {
-        return selectedCategories.size();
-    }
-
-    /**
-     * Show dialog asking for confirmation to leave without saving categories.
-     */
-
 
 }
