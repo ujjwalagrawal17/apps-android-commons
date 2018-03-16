@@ -9,11 +9,16 @@ import com.pedrogomez.renderers.Renderer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fr.free.nrw.commons.Media;
+import fr.free.nrw.commons.MediaWikiImageView;
 import fr.free.nrw.commons.R;
 
 class BrowseImagesRenderer extends Renderer<BrowsedImageItem> {
-    @BindView(R.id.tvCategoryName)
-    TextView tvCategoryName;
+    @BindView(R.id.tvImageName)
+    TextView tvImageName;
+    @BindView(R.id.browseImage)
+    MediaWikiImageView browseImage;
+
     private final CategoryClickedListener listener;
 
     BrowseImagesRenderer(CategoryClickedListener listener) {
@@ -22,7 +27,7 @@ class BrowseImagesRenderer extends Renderer<BrowsedImageItem> {
 
     @Override
     protected View inflate(LayoutInflater layoutInflater, ViewGroup viewGroup) {
-        return layoutInflater.inflate(R.layout.layout_browse_categories_item, viewGroup, false);
+        return layoutInflater.inflate(R.layout.layout_browse_images_item, viewGroup, false);
     }
 
     @Override
@@ -43,7 +48,8 @@ class BrowseImagesRenderer extends Renderer<BrowsedImageItem> {
     @Override
     public void render() {
         BrowsedImageItem item = getContent();
-        tvCategoryName.setText(item.getName());
+        tvImageName.setText(item.getName());
+        browseImage.setMedia(new Media(item.getName()));
     }
 
     interface CategoryClickedListener {

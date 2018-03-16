@@ -106,7 +106,7 @@ public class BrowseImageFragment extends CommonsDaggerSupportFragment {
 
                                 } else {
                                     // Inform the user that the searched term matches  no category
-                                    categoriesNotFoundView.setText(getString(R.string.categories_not_found, filter));
+                                    categoriesNotFoundView.setText(getString(R.string.images_not_found, filter));
                                     categoriesNotFoundView.setVisibility(View.VISIBLE);
                                 }
                             }

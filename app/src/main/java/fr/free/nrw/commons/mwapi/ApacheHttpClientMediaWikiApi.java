@@ -281,31 +281,31 @@ public class ApacheHttpClientMediaWikiApi implements MediaWikiApi {
 
     @Override
     @NonNull
-    public Observable<String> searchImages(String filterValue, int searchCatsLimit) {
+    public Observable<String> searchImages(String filterValue, int searchImageLimit) {
         return Single.fromCallable(() -> {
-            List<ApiResult> categoryNodes = null;
+            List<ApiResult> imageNodes = null;
             try {
-                categoryNodes = api.action("query")
+                imageNodes = api.action("query")
                         .param("format", "xml")
                         .param("list", "search")
                         .param("srwhat", "text")
-                        .param("srnamespace", "0")
-                        .param("srlimit", searchCatsLimit)
+                        .param("srnamespace", "6")
+                        .param("srlimit", searchImageLimit)
                         .param("srsearch", filterValue)
                         .get()
                         .getNodes("/api/query/search/p/@title");
             } catch (IOException e) {
-                Timber.e("Failed to obtain searchCategories", e);
+                Timber.e("Failed to obtain searchImages", e);
             }
 
-            if (categoryNodes == null) {
+            if (imageNodes == null) {
                 return new ArrayList<String>();
             }
 
             List<String> categories = new ArrayList<>();
-            for (ApiResult categoryNode : categoryNodes) {
-                String cat = categoryNode.getDocument().getTextContent();
-                categories.add(cat);
+            for (ApiResult imageNode : imageNodes) {
+                String imgName = imageNode.getDocument().getTextContent();
+                categories.add(imgName);
             }
 
             return categories;

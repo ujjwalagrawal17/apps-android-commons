@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <fr.free.nrw.commons.MediaWikiImageView
+        android:id="@+id/browseImage"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        app:actualImageScaleType="centerCrop"
+        />
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvImageName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:textSize="@dimen/subheading_text_size"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    />
+</LinearLayout>
