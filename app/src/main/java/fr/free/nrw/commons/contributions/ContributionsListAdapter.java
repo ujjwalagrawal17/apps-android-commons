@@ -33,6 +33,7 @@ class ContributionsListAdapter extends CursorAdapter {
 
         views.imageView.setMedia(contribution);
         views.titleView.setText(contribution.getDisplayTitle());
+        views.titleView.setText(contribution.getDisplayTitle());
 
         views.seqNumView.setText(String.valueOf(cursor.getPosition() + 1));
         views.seqNumView.setVisibility(View.VISIBLE);

@@ -7,7 +7,6 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -51,14 +49,14 @@ import timber.log.Timber;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class MediaDetailFragment extends CommonsDaggerSupportFragment {
+public class PhotoViewerFragment extends CommonsDaggerSupportFragment {
 
     private boolean editable;
     private MediaDetailPagerFragment.MediaDetailProvider detailProvider;
     private int index;
 
-    public static MediaDetailFragment forMedia(int index, boolean editable) {
-        MediaDetailFragment mf = new MediaDetailFragment();
+    public static PhotoViewerFragment forMedia(int index, boolean editable) {
+        PhotoViewerFragment mf = new PhotoViewerFragment();
 
         Bundle state = new Bundle();
         state.putBoolean("editable", editable);
