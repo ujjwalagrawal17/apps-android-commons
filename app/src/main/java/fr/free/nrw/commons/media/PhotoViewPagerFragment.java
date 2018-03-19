@@ -1,10 +1,7 @@
 package fr.free.nrw.commons.media;
 
-import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,16 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.auth.SessionManager;
 import fr.free.nrw.commons.contributions.Contribution;
 import fr.free.nrw.commons.contributions.ContributionsActivity;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
-import fr.free.nrw.commons.mwapi.MediaWikiApi;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -45,25 +37,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class PhotoViewPagerFragment extends CommonsDaggerSupportFragment implements ViewPager.OnPageChangeListener {
 
-    @Inject
-    MediaWikiApi mwApi;
-    @Inject
-    SessionManager sessionManager;
-    @Inject
-    @Named("default_preferences")
-    SharedPreferences prefs;
-
     private ViewPager pager;
-    private Boolean editable;
-
-    public PhotoViewPagerFragment() {
-        this(false);
-    }
-
-    @SuppressLint("ValidFragment")
-    public PhotoViewPagerFragment(Boolean editable) {
-        this.editable = editable;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -95,15 +69,11 @@ public class PhotoViewPagerFragment extends CommonsDaggerSupportFragment impleme
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("current-page", pager.getCurrentItem());
-        outState.putBoolean("editable", editable);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            editable = savedInstanceState.getBoolean("editable");
-        }
         setHasOptionsMenu(true);
     }
 
@@ -195,7 +165,7 @@ public class PhotoViewPagerFragment extends CommonsDaggerSupportFragment impleme
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (!editable) { // Disable menu options for editable views
+         // Disable menu options for editable views
             menu.clear(); // see http://stackoverflow.com/a/8495697/17865
             inflater.inflate(R.menu.fragment_image_detail, menu);
             if (pager != null) {
@@ -246,7 +216,6 @@ public class PhotoViewPagerFragment extends CommonsDaggerSupportFragment impleme
                     }
                 }
             }
-        }
     }
 
     public void showImage(int i) {
@@ -285,11 +254,12 @@ public class PhotoViewPagerFragment extends CommonsDaggerSupportFragment impleme
                 // See bug https://code.google.com/p/android/issues/detail?id=27526
                 pager.postDelayed(() -> getActivity().supportInvalidateOptionsMenu(), 5);
             }
-            return MediaDetailFragment.forMedia(i, editable);
+            return PhotoViewerFragment.forMedia(i);
         }
 
         @Override
         public int getCount() {
+
             return ((MediaDetailProvider) getActivity()).getTotalMediaCount();
         }
     }

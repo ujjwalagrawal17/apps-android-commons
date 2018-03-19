@@ -94,8 +94,6 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
     private DataSetObserver dataObserver;
     private AsyncTask<Void, Void, Boolean> detailFetchTask;
     private LicenseList licenseList;
-    private PhotoView photoView;
-    private FrameLayout frameLayout;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -141,8 +139,6 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
         uploadedDate = (TextView) view.findViewById(R.id.mediaDetailuploadeddate);
         delete = (Button) view.findViewById(R.id.nominateDeletion);
         categoryContainer = (LinearLayout) view.findViewById(R.id.mediaDetailCategoryContainer);
-        photoView = (PhotoView) view.findViewById(R.id.photo_view);
-        frameLayout = (FrameLayout) view.findViewById(R.id.frame_layout);
 
         licenseList = new LicenseList(getActivity());
 
@@ -303,10 +299,6 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
             toast.show();
             }
 
-        if (media.getImageUrl() != null){
-            title.setOnClickListener(v -> openPhotoViewer(media.getImageUrl()));
-        }
-
         if (media.getCoordinates() != null) {
             coordinates.setOnClickListener(v -> openMap(media.getCoordinates()));
         }
@@ -356,14 +348,6 @@ public class MediaDetailFragment extends CommonsDaggerSupportFragment {
                 d.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             });
         }
-    }
-
-    private void openPhotoViewer(String imageUrl) {
-        Toast.makeText(getContext(), imageUrl, Toast.LENGTH_SHORT).show();
-        frameLayout.setVisibility(View.GONE);
-        photoView.setImageURI(Uri.parse(imageUrl));
-//        photoView.setImageResource(R.drawable.commons_logo_large);
-
     }
 
     private void rebuildCatList() {

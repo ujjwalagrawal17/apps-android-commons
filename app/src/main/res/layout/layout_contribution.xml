@@ -57,19 +57,19 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/contributionTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFFFF"
                 style="?android:textAppearanceMedium"
                 android:maxLines="2"
-                android:ellipsize="end"
                 />
             <ImageView
                 android:id="@+id/contributionViewImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentRight="true"
-                app:srcCompat="@drawable/ic_edit_black_24dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_home_black_24dp"
                 />
 
         </RelativeLayout>

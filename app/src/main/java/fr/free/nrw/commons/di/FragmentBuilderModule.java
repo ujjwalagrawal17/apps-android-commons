@@ -6,6 +6,8 @@ import fr.free.nrw.commons.category.CategorizationFragment;
 import fr.free.nrw.commons.contributions.ContributionsListFragment;
 import fr.free.nrw.commons.media.MediaDetailFragment;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
+import fr.free.nrw.commons.media.PhotoViewPagerFragment;
+import fr.free.nrw.commons.media.PhotoViewerFragment;
 import fr.free.nrw.commons.nearby.NearbyListFragment;
 import fr.free.nrw.commons.nearby.NoPermissionsFragment;
 import fr.free.nrw.commons.settings.SettingsFragment;
@@ -43,4 +45,9 @@ public abstract class FragmentBuilderModule {
     @ContributesAndroidInjector
     abstract SingleUploadFragment bindSingleUploadFragment();
 
+    @ContributesAndroidInjector
+    abstract PhotoViewPagerFragment bindPhotoViewPagerFragment();
+
+    @ContributesAndroidInjector
+    abstract PhotoViewerFragment bindPhotoViewerFragment();
 }

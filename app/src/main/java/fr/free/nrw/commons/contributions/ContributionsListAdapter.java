@@ -2,6 +2,7 @@ package fr.free.nrw.commons.contributions;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +13,11 @@ import fr.free.nrw.commons.R;
 class ContributionsListAdapter extends CursorAdapter {
 
     private final ContributionDao contributionDao;
+    private Context context;
 
     public ContributionsListAdapter(Context context, Cursor c, int flags, ContributionDao contributionDao) {
         super(context, c, flags);
+        this.context =context;
         this.contributionDao = contributionDao;
     }
 
@@ -34,6 +37,7 @@ class ContributionsListAdapter extends CursorAdapter {
         views.imageView.setMedia(contribution);
         views.titleView.setText(contribution.getDisplayTitle());
         views.titleView.setText(contribution.getDisplayTitle());
+        views.contributionViewImage.setOnClickListener(v -> openInMediaViewer(cursor.getPosition()));
 
         views.seqNumView.setText(String.valueOf(cursor.getPosition() + 1));
         views.seqNumView.setVisibility(View.VISIBLE);
@@ -66,5 +70,9 @@ class ContributionsListAdapter extends CursorAdapter {
                 views.progressView.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    private void openInMediaViewer(int position) {
+        ((ContributionsActivity)context).openInMediaViewer(position);
     }
 }

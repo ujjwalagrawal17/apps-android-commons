@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +34,7 @@ import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.auth.AuthenticatedActivity;
 import fr.free.nrw.commons.auth.SessionManager;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
+import fr.free.nrw.commons.media.PhotoViewPagerFragment;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
 import fr.free.nrw.commons.settings.Prefs;
 import fr.free.nrw.commons.upload.UploadService;
@@ -52,6 +54,7 @@ public  class       ContributionsActivity
         implements  LoaderManager.LoaderCallbacks<Cursor>,
                     AdapterView.OnItemClickListener,
                     MediaDetailPagerFragment.MediaDetailProvider,
+                    PhotoViewPagerFragment.MediaDetailProvider,
                     FragmentManager.OnBackStackChangedListener,
                     ContributionsListFragment.SourceRefresher {
 
@@ -63,6 +66,7 @@ public  class       ContributionsActivity
     private Cursor allContributions;
     private ContributionsListFragment contributionsList;
     private MediaDetailPagerFragment mediaDetails;
+    private PhotoViewPagerFragment photoViewPagerFragment;
     private UploadService uploadService;
     private boolean isUploadServiceConnected;
     private ArrayList<DataSetObserver> observersWaitingForLoad = new ArrayList<>();
@@ -173,6 +177,21 @@ public  class       ContributionsActivity
         mediaDetails.showImage(i);
     }
 
+    public void openInMediaViewer(int i) {
+        if (photoViewPagerFragment == null || !photoViewPagerFragment.isVisible()) {
+            photoViewPagerFragment = new PhotoViewPagerFragment();
+            FragmentManager supportFragmentManager = getSupportFragmentManager();
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.contributionsFragmentContainer, photoViewPagerFragment)
+                    .addToBackStack(null)
+                    .commit();
+            supportFragmentManager.executePendingTransactions();
+        }
+        photoViewPagerFragment.showImage(i);
+//        Open Photoview in ViewPager
+    }
+
     public void retryUpload(int i) {
         allContributions.moveToPosition(i);
         Contribution c = contributionDao.fromCursor(allContributions);
@@ -236,7 +255,7 @@ public  class       ContributionsActivity
         contributionsList.changeProgressBarVisibility(false);
 
         if (contributionsList.getAdapter() == null) {
-            contributionsList.setAdapter(new ContributionsListAdapter(getApplicationContext(),
+            contributionsList.setAdapter(new ContributionsListAdapter(this,
                     cursor, 0, contributionDao));
         } else {
             ((CursorAdapter) contributionsList.getAdapter()).swapCursor(cursor);
