@@ -1,7 +1,6 @@
 package fr.free.nrw.commons.media;
 
 import android.database.DataSetObserver;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,14 +8,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.github.chrisbanes.photoview.PhotoView;
+import com.alexvasilkov.gestures.Settings;
+import com.alexvasilkov.gestures.views.GestureImageView;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -158,8 +154,9 @@ public class PhotoViewerFragment extends CommonsDaggerSupportFragment {
 
     private void openPhotoViewer(String imageUrl) {
 //        Toast.makeText(getContext(), imageUrl, Toast.LENGTH_SHORT).show();
-        photoView.setImageURI(Uri.parse(imageUrl));
-        imageView.getController().getSettings()
+//        photoView.setImageURI(Uri.parse(imageUrl));
+
+        photoView.getController().getSettings()
                 .setMaxZoom(5f)
                 .setPanEnabled(true)
                 .setZoomEnabled(true)
@@ -175,9 +172,7 @@ public class PhotoViewerFragment extends CommonsDaggerSupportFragment {
 //        if (context instanceof ImageViewerActivity) {
 //            ((ImageViewerActivity) context).enableScroll(imageView);
 //        }
-//        imageView.setU
-//        photoView.setImageResource(R.drawable.commons_logo_large);
-
+        photoView.setImageURI(Uri.parse(imageUrl));
     }
 
 }
