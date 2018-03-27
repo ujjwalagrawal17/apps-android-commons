@@ -1,37 +1,31 @@
 package fr.free.nrw.commons.nearby;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.location.LatLng;
 import fr.free.nrw.commons.location.LocationServiceManager;
@@ -39,13 +33,11 @@ import fr.free.nrw.commons.location.LocationUpdateListener;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
 import fr.free.nrw.commons.utils.NetworkUtils;
 import fr.free.nrw.commons.utils.UriSerializer;
-
 import fr.free.nrw.commons.utils.ViewUtil;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 import timber.log.Timber;
 
 
@@ -72,15 +64,12 @@ public class NearbyActivity extends NavigationBaseActivity implements LocationUp
     private Bundle bundle;
     private Disposable placesDisposable;
     private boolean lockNearbyView; //Determines if the nearby places needs to be refreshed
-    private BottomSheetBehavior bottomSheetBehavior; // Behavior for list bottom sheet
-    private BottomSheetBehavior bottomSheetBehaviorForDetails; // Behavior for details bottom sheet
+    private BottomSheetBehavior<LinearLayout> bottomSheetBehavior; // Behavior for list bottom sheet
+    private BottomSheetBehavior<LinearLayout> bottomSheetBehaviorForDetails; // Behavior for details bottom sheet
     public NearbyMapFragment nearbyMapFragment;
     private NearbyListFragment nearbyListFragment;
     private static final String TAG_RETAINED_MAP_FRAGMENT = NearbyMapFragment.class.getSimpleName();
     private static final String TAG_RETAINED_LIST_FRAGMENT = NearbyListFragment.class.getSimpleName();
-
-    private final String NETWORK_INTENT_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,7 +268,19 @@ public class NearbyActivity extends NavigationBaseActivity implements LocationUp
         super.onResume();
         lockNearbyView = false;
         checkGps();
-        addNetworkBroadcastReceiver();
+        NetworkUtils.checkConnection(new WeakReference<>(this), new NetworkUtils.NetworkStateReceiverListener() {
+            @Override
+            public void networkAvailable() {
+                refreshView(LocationServiceManager
+                        .LocationChangeType.LOCATION_SIGNIFICANTLY_CHANGED);
+
+            }
+
+            @Override
+            public void networkUnavailable() {
+                ViewUtil.showLongToast(NearbyActivity.this, getString(R.string.no_internet));
+            }
+        });
     }
 
     @Override
@@ -292,27 +293,7 @@ public class NearbyActivity extends NavigationBaseActivity implements LocationUp
             // to the retained fragment object to perform its own cleanup.
             removeMapFragment();
             removeListFragment();
-            unregisterReceiver(broadcastReceiver);
         }
-    }
-
-    private void addNetworkBroadcastReceiver() {
-        IntentFilter intentFilter = new IntentFilter(NETWORK_INTENT_ACTION);
-
-        broadcastReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (NetworkUtils.isInternetConnectionEstablished(NearbyActivity.this)) {
-                    refreshView(LocationServiceManager
-                            .LocationChangeType.LOCATION_SIGNIFICANTLY_CHANGED);
-                } else {
-                    ViewUtil.showLongToast(NearbyActivity.this, getString(R.string.no_internet));
-                }
-            }
-        };
-
-        this.registerReceiver(broadcastReceiver, intentFilter);
     }
 
 
