@@ -268,19 +268,11 @@ public class NearbyActivity extends NavigationBaseActivity implements LocationUp
         super.onResume();
         lockNearbyView = false;
         checkGps();
-        NetworkUtils.checkConnection(new WeakReference<>(this), new NetworkUtils.NetworkStateReceiverListener() {
-            @Override
-            public void networkAvailable() {
-                refreshView(LocationServiceManager
-                        .LocationChangeType.LOCATION_SIGNIFICANTLY_CHANGED);
-
-            }
-
-            @Override
-            public void networkUnavailable() {
-                ViewUtil.showLongToast(NearbyActivity.this, getString(R.string.no_internet));
-            }
-        });
+        if (NetworkUtils.isInternetConnectionEstablished(this)) {
+            refreshView(LocationServiceManager.LocationChangeType.LOCATION_SIGNIFICANTLY_CHANGED);
+        }else {
+            ViewUtil.showLongToast(NearbyActivity.this, getString(R.string.no_internet));
+        }
     }
 
     @Override
