@@ -6,6 +6,7 @@ import fr.free.nrw.commons.AboutActivity;
 import fr.free.nrw.commons.WelcomeActivity;
 import fr.free.nrw.commons.auth.LoginActivity;
 import fr.free.nrw.commons.auth.SignupActivity;
+import fr.free.nrw.commons.browse.SearchActivity;
 import fr.free.nrw.commons.contributions.ContributionsActivity;
 import fr.free.nrw.commons.category.CategoryImagesActivity;
 import fr.free.nrw.commons.nearby.NearbyActivity;
@@ -50,4 +51,7 @@ public abstract class ActivityBuilderModule {
 
     @ContributesAndroidInjector
     abstract CategoryImagesActivity bindFeaturedImagesActivity();
+
+    @ContributesAndroidInjector
+    abstract SearchActivity bindSearchActivity();
 }
