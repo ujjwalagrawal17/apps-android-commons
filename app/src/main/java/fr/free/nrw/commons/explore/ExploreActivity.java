@@ -1,7 +1,5 @@
 package fr.free.nrw.commons.explore;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
@@ -27,26 +26,15 @@ import fr.free.nrw.commons.theme.NavigationBaseActivity;
  * which is nothing but another category on wikimedia commons.
  */
 
-public class ExploreActivity
-        extends AuthenticatedActivity
-        implements FragmentManager.OnBackStackChangedListener,
-                    MediaDetailPagerFragment.MediaDetailProvider,
+public class ExploreActivity extends NavigationBaseActivity
+        implements MediaDetailPagerFragment.MediaDetailProvider,
                     AdapterView.OnItemClickListener{
 
 
+    private static final String FEATURED_IMAGES_CATEGORY = "Category:Featured_pictures_on_Wikimedia_Commons";
     private FragmentManager supportFragmentManager;
     private CategoryImagesListFragment categoryImagesListFragment;
     private MediaDetailPagerFragment mediaDetails;
-
-    @Override
-    protected void onAuthCookieAcquired(String authCookie) {
-
-    }
-
-    @Override
-    protected void onAuthFailure() {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +46,14 @@ public class ExploreActivity
         // reference to the Fragment from FragmentManager, using findFragmentById()
         supportFragmentManager = getSupportFragmentManager();
         setCategoryImagesFragment();
-        supportFragmentManager.addOnBackStackChangedListener(this);
         if (savedInstanceState != null) {
             mediaDetails = (MediaDetailPagerFragment) supportFragmentManager
                     .findFragmentById(R.id.fragmentContainer);
 
         }
-        requestAuthToken();
         initDrawer();
         setPageTitle();
+        setTitle(R.string.title_activity_explore);
     }
 
     /**
@@ -74,14 +61,11 @@ public class ExploreActivity
      */
     private void setCategoryImagesFragment() {
         categoryImagesListFragment = new CategoryImagesListFragment();
-        String categoryName = getIntent().getStringExtra("categoryName");
-        if (getIntent() != null && categoryName != null) {
-            Bundle arguments = new Bundle();
-            arguments.putString("categoryName", categoryName);
-            categoryImagesListFragment.setArguments(arguments);
-            FragmentTransaction transaction = supportFragmentManager.beginTransaction();
-            transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
-        }
+        Bundle arguments = new Bundle();
+        arguments.putString("categoryName", FEATURED_IMAGES_CATEGORY);
+        categoryImagesListFragment.setArguments(arguments);
+        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
+        transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
     }
 
     /**
@@ -91,10 +75,6 @@ public class ExploreActivity
         if (getIntent() != null && getIntent().getStringExtra("title") != null) {
             setTitle(getIntent().getStringExtra("title"));
         }
-    }
-
-    @Override
-    public void onBackStackChanged() {
     }
 
     @Override
@@ -111,20 +91,6 @@ public class ExploreActivity
             supportFragmentManager.executePendingTransactions();
         }
         mediaDetails.showImage(i);
-    }
-
-    /**
-     * Consumers should be simply using this method to use this activity.
-     * @param context
-     * @param title Page title
-     * @param categoryName Name of the category for displaying its images
-     */
-    public static void startYourself(Context context, String title, String categoryName) {
-        Intent intent = new Intent(context, ExploreActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        intent.putExtra("title", title);
-        intent.putExtra("categoryName", categoryName);
-        context.startActivity(intent);
     }
 
     @Override
@@ -163,7 +129,7 @@ public class ExploreActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_featured_image, menu);
+        inflater.inflate(R.menu.menu_explore, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

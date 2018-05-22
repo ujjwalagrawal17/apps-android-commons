@@ -3,28 +3,28 @@ package fr.free.nrw.commons.explore.images;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class BrowsedImageItem implements Parcelable {
+public class SearchImageItem implements Parcelable {
     private final String name;
     private boolean selected;
 
-    public static Creator<BrowsedImageItem> CREATOR = new Creator<BrowsedImageItem>() {
+    public static Creator<SearchImageItem> CREATOR = new Creator<SearchImageItem>() {
         @Override
-        public BrowsedImageItem createFromParcel(Parcel parcel) {
-            return new BrowsedImageItem(parcel);
+        public SearchImageItem createFromParcel(Parcel parcel) {
+            return new SearchImageItem(parcel);
         }
 
         @Override
-        public BrowsedImageItem[] newArray(int i) {
-            return new BrowsedImageItem[0];
+        public SearchImageItem[] newArray(int i) {
+            return new SearchImageItem[0];
         }
     };
 
-    public BrowsedImageItem(String name, boolean selected) {
+    public SearchImageItem(String name, boolean selected) {
         this.name = name;
         this.selected = selected;
     }
 
-    private BrowsedImageItem(Parcel in) {
+    private SearchImageItem(Parcel in) {
         name = in.readString();
         selected = in.readInt() == 1;
     }
@@ -61,7 +61,7 @@ public class BrowsedImageItem implements Parcelable {
             return false;
         }
 
-        BrowsedImageItem that = (BrowsedImageItem) o;
+        SearchImageItem that = (SearchImageItem) o;
 
         return name.equals(that.name);
 

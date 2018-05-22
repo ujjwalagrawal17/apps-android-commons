@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.explore.images.BrowseImageFragment;
+import fr.free.nrw.commons.explore.images.SearchImageFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -27,7 +27,7 @@ public class SearchActivity extends NavigationBaseActivity implements FragmentMa
     @BindView(R.id.toolbar_search) Toolbar toolbar;
     @BindView(R.id.searchBox) EditText etSearchKeyword;
 
-    private BrowseImageFragment browseImageFragment;
+    private SearchImageFragment searchImageFragment;
     private FragmentManager supportFragmentManager;
 
 
@@ -46,16 +46,16 @@ public class SearchActivity extends NavigationBaseActivity implements FragmentMa
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( filter -> {
                         //update image list
-                            browseImageFragment.updateImageList(filter.toString());
+                            searchImageFragment.updateImageList(filter.toString());
                         }
                 );
     }
 
 
     private void setBrowseImagesFragment() {
-        browseImageFragment = new BrowseImageFragment();
+        searchImageFragment = new SearchImageFragment();
         FragmentTransaction transaction = supportFragmentManager.beginTransaction();
-        transaction .add(R.id.fragmentContainer, browseImageFragment).commit();
+        transaction .add(R.id.fragmentContainer, searchImageFragment).commit();
     }
 
     @Override

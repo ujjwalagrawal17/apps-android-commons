@@ -104,7 +104,6 @@ public class CategoryImagesListFragment extends DaggerFragment {
             handleNoInternet();
             return;
         }
-
         isLoading = true;
         progressBar.setVisibility(VISIBLE);
         Observable.fromCallable(() -> controller.getCategoryImages(categoryName))
@@ -216,9 +215,16 @@ public class CategoryImagesListFragment extends DaggerFragment {
             gridAdapter.addItems(collection);
         }
 
+
         progressBar.setVisibility(GONE);
         isLoading = false;
         statusTextView.setVisibility(GONE);
+    }
+
+    @Override
+    public void onResume() {
+        gridView.setAdapter(gridAdapter);
+        super.onResume();
     }
 
     public ListAdapter getAdapter() {

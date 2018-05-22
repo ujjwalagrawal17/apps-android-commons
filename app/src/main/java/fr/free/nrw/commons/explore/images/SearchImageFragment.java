@@ -37,7 +37,7 @@ import timber.log.Timber;
  * Displays the image search screen.
  */
 
-public class BrowseImageFragment extends CommonsDaggerSupportFragment {
+public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     public static final int SEARCH_CATS_LIMIT = 25;
 
@@ -52,12 +52,12 @@ public class BrowseImageFragment extends CommonsDaggerSupportFragment {
     MediaWikiApi mwApi;
     @Inject @Named("default_preferences") SharedPreferences prefs;
 
-    private RVRendererAdapter<BrowsedImageItem> categoriesAdapter;
-    private List<BrowsedImageItem> selectedCategories = new ArrayList<>();
+    private RVRendererAdapter<SearchImageItem> categoriesAdapter;
+    private List<SearchImageItem> selectedCategories = new ArrayList<>();
 
-    private final BrowseImagesAdapterFactory adapterFactory = new BrowseImagesAdapterFactory(item -> {
+    private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
 
-        Toast.makeText(getContext(),"Add category to recently searched category db table and move to Category Details Activity ",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
 
     });
 
@@ -69,7 +69,7 @@ public class BrowseImageFragment extends CommonsDaggerSupportFragment {
 
         categoriesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ArrayList<BrowsedImageItem> items = new ArrayList<>();
+        ArrayList<SearchImageItem> items = new ArrayList<>();
 
         categoriesAdapter = adapterFactory.create(items);
         categoriesList.setAdapter(categoriesAdapter);
@@ -112,20 +112,20 @@ public class BrowseImageFragment extends CommonsDaggerSupportFragment {
                 );
     }
 
-    private Comparator<BrowsedImageItem> sortBySimilarity(final String filter) {
+    private Comparator<SearchImageItem> sortBySimilarity(final String filter) {
         Comparator<String> stringSimilarityComparator = StringSortingUtils.sortBySimilarity(filter);
         return (firstItem, secondItem) -> stringSimilarityComparator
                 .compare(firstItem.getName(), secondItem.getName());
     }
 
-    private Observable<BrowsedImageItem> searchCategories(String term) {
+    private Observable<SearchImageItem> searchCategories(String term) {
         //If user hasn't typed anything in yet, get GPS and recent items
         if (TextUtils.isEmpty(term)) {
             return Observable.empty();
         }
 
         return mwApi.searchImages(term, SEARCH_CATS_LIMIT)
-                .map(s -> new BrowsedImageItem(s,false));
+                .map(s -> new SearchImageItem(s,false));
     }
 
 }

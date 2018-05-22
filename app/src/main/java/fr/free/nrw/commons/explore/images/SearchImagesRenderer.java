@@ -13,14 +13,14 @@ import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.MediaWikiImageView;
 import fr.free.nrw.commons.R;
 
-class BrowseImagesRenderer extends Renderer<BrowsedImageItem> {
+class SearchImagesRenderer extends Renderer<SearchImageItem> {
     @BindView(R.id.categoryImageTitle) TextView tvImageName;
     @BindView(R.id.categoryImageAuthor) TextView categoryImageAuthor;
     @BindView(R.id.categoryImageView) MediaWikiImageView browseImage;
 
-    private final CategoryClickedListener listener;
+    private final ImageClickedListener listener;
 
-    BrowseImagesRenderer(CategoryClickedListener listener) {
+    SearchImagesRenderer(ImageClickedListener listener) {
         this.listener = listener;
     }
 
@@ -37,24 +37,24 @@ class BrowseImagesRenderer extends Renderer<BrowsedImageItem> {
     @Override
     protected void hookListeners(View view) {
         view.setOnClickListener(v -> {
-            BrowsedImageItem item = getContent();
+            SearchImageItem item = getContent();
             if (listener != null) {
-                listener.categoryClicked(item);
+                listener.imageClicked(item);
             }
         });
     }
 
     @Override
     public void render() {
-        BrowsedImageItem item = getContent();
+        SearchImageItem item = getContent();
         Media media = new Media(item.getName());
         tvImageName.setText(item.getName());
         browseImage.setMedia(media);
         setAuthorView(media, categoryImageAuthor);
     }
 
-    interface CategoryClickedListener {
-        void categoryClicked(BrowsedImageItem item);
+    interface ImageClickedListener {
+        void imageClicked(SearchImageItem item);
     }
 
     private void setAuthorView(Media item, TextView author) {
