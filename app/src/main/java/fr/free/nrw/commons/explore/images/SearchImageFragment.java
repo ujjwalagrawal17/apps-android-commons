@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.pedrogomez.renderers.RVRendererAdapter;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,7 +26,6 @@ import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
-import fr.free.nrw.commons.utils.StringSortingUtils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -41,19 +39,19 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     public static final int SEARCH_CATS_LIMIT = 25;
 
-    @BindView(R.id.categoriesListBox)
-    RecyclerView categoriesList;
-    @BindView(R.id.categoriesSearchInProgress)
-    ProgressBar categoriesSearchInProgress;
-    @BindView(R.id.categoriesNotFound)
-    TextView categoriesNotFoundView;
+    @BindView(R.id.imagesListBox)
+    RecyclerView imagesList;
+    @BindView(R.id.imageSearchInProgress)
+    ProgressBar imageSearchInProgress;
+    @BindView(R.id.imagesNotFound)
+    TextView imagesNotFoundView;
 
     @Inject
     MediaWikiApi mwApi;
     @Inject @Named("default_preferences") SharedPreferences prefs;
 
-    private RVRendererAdapter<SearchImageItem> categoriesAdapter;
-    private List<SearchImageItem> selectedCategories = new ArrayList<>();
+    private RVRendererAdapter<SearchImageItem> imagesAdapter;
+    private List<SearchImageItem> selectedImages = new ArrayList<>();
 
     private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
 
@@ -67,59 +65,52 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
         View rootView = inflater.inflate(R.layout.fragment_browse_image, container, false);
         ButterKnife.bind(this, rootView);
 
-        categoriesList.setLayoutManager(new LinearLayoutManager(getContext()));
+        imagesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ArrayList<SearchImageItem> items = new ArrayList<>();
 
-        categoriesAdapter = adapterFactory.create(items);
-        categoriesList.setAdapter(categoriesAdapter);
+        imagesAdapter = adapterFactory.create(items);
+        imagesList.setAdapter(imagesAdapter);
 
         return rootView;
     }
 
     public void updateImageList(String filter) {
-        Observable.fromIterable(selectedCategories)
+        Observable.fromIterable(selectedImages)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> {
-                    categoriesSearchInProgress.setVisibility(View.VISIBLE);
-                    categoriesNotFoundView.setVisibility(View.GONE);
-                    categoriesAdapter.clear();
+                    imageSearchInProgress.setVisibility(View.VISIBLE);
+                    imagesNotFoundView.setVisibility(View.GONE);
+                    imagesAdapter.clear();
                 })
                 .observeOn(Schedulers.io())
                 .concatWith(
-                        searchCategories(filter)
+                        searchImages(filter)
                 )
                 .distinct()
-                .sorted(sortBySimilarity(filter))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        s -> categoriesAdapter.add(s),
+                        s -> imagesAdapter.add(s),
                         Timber::e,
                         () -> {
-                            categoriesAdapter.notifyDataSetChanged();
-                            categoriesSearchInProgress.setVisibility(View.GONE);
+                            imagesAdapter.notifyDataSetChanged();
+                            imageSearchInProgress.setVisibility(View.GONE);
 
-                            if (categoriesAdapter.getItemCount() == selectedCategories.size()) {
+                            if (imagesAdapter.getItemCount() == selectedImages.size()) {
                                 if (TextUtils.isEmpty(filter)) {
 
                                 } else {
-                                    categoriesNotFoundView.setText(getString(R.string.images_not_found, filter));
-                                    categoriesNotFoundView.setVisibility(View.VISIBLE);
+                                    imagesNotFoundView.setText(getString(R.string.images_not_found, filter));
+                                    imagesNotFoundView.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
                 );
     }
 
-    private Comparator<SearchImageItem> sortBySimilarity(final String filter) {
-        Comparator<String> stringSimilarityComparator = StringSortingUtils.sortBySimilarity(filter);
-        return (firstItem, secondItem) -> stringSimilarityComparator
-                .compare(firstItem.getName(), secondItem.getName());
-    }
-
-    private Observable<SearchImageItem> searchCategories(String term) {
-        //If user hasn't typed anything in yet, get GPS and recent items
+    private Observable<SearchImageItem> searchImages(String term) {
+        //If user hasn't typed anything in yet, get search history
         if (TextUtils.isEmpty(term)) {
             return Observable.empty();
         }

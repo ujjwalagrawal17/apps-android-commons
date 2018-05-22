@@ -1,5 +1,6 @@
 package fr.free.nrw.commons.explore;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,8 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.explore.images.SearchImageFragment;
+import fr.free.nrw.commons.media.MediaDetailPagerFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -22,7 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * Represents search screen of this app
  */
 
-public class SearchActivity extends NavigationBaseActivity implements FragmentManager.OnBackStackChangedListener {
+public class SearchActivity extends NavigationBaseActivity implements MediaDetailPagerFragment.MediaDetailProvider{
 
     @BindView(R.id.toolbar_search) Toolbar toolbar;
     @BindView(R.id.searchBox) EditText etSearchKeyword;
@@ -39,7 +42,6 @@ public class SearchActivity extends NavigationBaseActivity implements FragmentMa
         toolbar.setNavigationOnClickListener(v->onBackPressed());
         supportFragmentManager = getSupportFragmentManager();
         setBrowseImagesFragment();
-        supportFragmentManager.addOnBackStackChangedListener(this);
         RxTextView.textChanges(etSearchKeyword)
                 .takeUntil(RxView.detaches(etSearchKeyword))
                 .debounce(500, TimeUnit.MILLISECONDS)
@@ -58,8 +60,29 @@ public class SearchActivity extends NavigationBaseActivity implements FragmentMa
         transaction .add(R.id.fragmentContainer, searchImageFragment).commit();
     }
 
+
     @Override
-    public void onBackStackChanged() {
+    public Media getMediaAtPosition(int i) {
+        return null;
+    }
+
+    @Override
+    public int getTotalMediaCount() {
+        return 0;
+    }
+
+    @Override
+    public void notifyDatasetChanged() {
+
+    }
+
+    @Override
+    public void registerDataSetObserver(DataSetObserver observer) {
+
+    }
+
+    @Override
+    public void unregisterDataSetObserver(DataSetObserver observer) {
 
     }
 }
