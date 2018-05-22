@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.browse.images;
+package fr.free.nrw.commons.explore.images;
 
 import com.pedrogomez.renderers.ListAdapteeCollection;
 import com.pedrogomez.renderers.RVRendererAdapter;

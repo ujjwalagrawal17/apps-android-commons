@@ -156,7 +156,7 @@
             android:label="@string/provider_categories"
             android:syncable="false" />
 
-        <activity android:name=".browse.SearchActivity"></activity>
+        <activity android:name=".explore.SearchActivity"></activity>
     </application>
 
 </manifest>

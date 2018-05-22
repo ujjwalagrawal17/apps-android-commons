@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.browse.images;
+package fr.free.nrw.commons.explore.images;
 
 import android.os.Parcel;
 import android.os.Parcelable;

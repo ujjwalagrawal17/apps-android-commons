@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.browse;
+package fr.free.nrw.commons.explore;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -14,8 +14,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.browse.images.BrowseImageFragment;
-import fr.free.nrw.commons.category.CategoryImagesListFragment;
+import fr.free.nrw.commons.explore.images.BrowseImageFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 

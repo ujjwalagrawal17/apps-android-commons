@@ -1,4 +1,4 @@
-package fr.free.nrw.commons.category;
+package fr.free.nrw.commons.explore;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,9 @@ import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -13,7 +16,9 @@ import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.auth.AuthenticatedActivity;
+import fr.free.nrw.commons.category.CategoryImagesListFragment;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
+import fr.free.nrw.commons.theme.NavigationBaseActivity;
 
 /**
  * This activity displays pictures of a particular category
@@ -22,7 +27,7 @@ import fr.free.nrw.commons.media.MediaDetailPagerFragment;
  * which is nothing but another category on wikimedia commons.
  */
 
-public class CategoryImagesActivity
+public class ExploreActivity
         extends AuthenticatedActivity
         implements FragmentManager.OnBackStackChangedListener,
                     MediaDetailPagerFragment.MediaDetailProvider,
@@ -75,9 +80,7 @@ public class CategoryImagesActivity
             arguments.putString("categoryName", categoryName);
             categoryImagesListFragment.setArguments(arguments);
             FragmentTransaction transaction = supportFragmentManager.beginTransaction();
-            transaction
-                    .add(R.id.fragmentContainer, categoryImagesListFragment)
-                    .commit();
+            transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
         }
     }
 
@@ -117,7 +120,7 @@ public class CategoryImagesActivity
      * @param categoryName Name of the category for displaying its images
      */
     public static void startYourself(Context context, String title, String categoryName) {
-        Intent intent = new Intent(context, CategoryImagesActivity.class);
+        Intent intent = new Intent(context, ExploreActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra("title", title);
         intent.putExtra("categoryName", categoryName);
@@ -157,5 +160,24 @@ public class CategoryImagesActivity
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_featured_image, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                NavigationBaseActivity.startActivityWithFlags(this, SearchActivity.class);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }
