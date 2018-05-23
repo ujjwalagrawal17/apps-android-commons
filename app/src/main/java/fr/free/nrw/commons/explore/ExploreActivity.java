@@ -9,12 +9,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.auth.AuthenticatedActivity;
 import fr.free.nrw.commons.category.CategoryImagesListFragment;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
@@ -39,7 +37,7 @@ public class ExploreActivity extends NavigationBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category_images);
+        setContentView(R.layout.activity_explore);
         ButterKnife.bind(this);
 
         // Activity can call methods in the fragment by acquiring a
@@ -47,12 +45,10 @@ public class ExploreActivity extends NavigationBaseActivity
         supportFragmentManager = getSupportFragmentManager();
         setCategoryImagesFragment();
         if (savedInstanceState != null) {
-            mediaDetails = (MediaDetailPagerFragment) supportFragmentManager
-                    .findFragmentById(R.id.fragmentContainer);
+            mediaDetails = (MediaDetailPagerFragment) supportFragmentManager.findFragmentById(R.id.fragmentContainer);
 
         }
         initDrawer();
-        setPageTitle();
         setTitle(R.string.title_activity_explore);
     }
 
@@ -66,15 +62,6 @@ public class ExploreActivity extends NavigationBaseActivity
         categoryImagesListFragment.setArguments(arguments);
         FragmentTransaction transaction = supportFragmentManager.beginTransaction();
         transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
-    }
-
-    /**
-     * Gets the passed title from the intents and displays it as the page title
-     */
-    private void setPageTitle() {
-        if (getIntent() != null && getIntent().getStringExtra("title") != null) {
-            setTitle(getIntent().getStringExtra("title"));
-        }
     }
 
     @Override

@@ -15,11 +15,11 @@ class SearchImagesAdapterFactory {
         this.listener = listener;
     }
 
-    public RVRendererAdapter<SearchImageItem> create(List<SearchImageItem> placeList) {
+    public RVRendererAdapter<SearchImageItem> create(List<SearchImageItem> searchImageItemList) {
         RendererBuilder<SearchImageItem> builder = new RendererBuilder<SearchImageItem>()
                 .bind(SearchImageItem.class, new SearchImagesRenderer(listener));
         ListAdapteeCollection<SearchImageItem> collection = new ListAdapteeCollection<>(
-                placeList != null ? placeList : Collections.<SearchImageItem>emptyList());
+                searchImageItemList != null ? searchImageItemList : Collections.<SearchImageItem>emptyList());
         return new RVRendererAdapter<>(builder, collection);
     }
 }

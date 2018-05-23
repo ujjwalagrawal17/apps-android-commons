@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -16,7 +18,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.category.Category;
 import fr.free.nrw.commons.explore.images.SearchImageFragment;
+import fr.free.nrw.commons.explore.images.SearchImageItem;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,7 +36,8 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
 
     private SearchImageFragment searchImageFragment;
     private FragmentManager supportFragmentManager;
-
+    private MediaDetailPagerFragment mediaDetails;
+    SearchImageItem searchImageItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +68,21 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
 
     @Override
     public Media getMediaAtPosition(int i) {
-        return null;
+        if (searchImageItem.getName() == null) {
+            // not yet ready to return data
+            return null;
+        } else {
+            return new Media(searchImageItem.getName());
+        }
     }
 
     @Override
     public int getTotalMediaCount() {
-        return 0;
+        return 1;
+//        if (searchImageFragment.getAdapter() == null) {
+//            return 0;
+//        }
+//        return searchImageFragment.getAdapter().getCount();
     }
 
     @Override
@@ -84,5 +98,44 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
 
+    }
+
+    public void onSearchImageClicked(SearchImageItem searchImageItem) {
+        this.searchImageItem = searchImageItem;
+        toolbar.setVisibility(View.GONE);
+        setToolbarVisibility(true);
+        if (mediaDetails == null || !mediaDetails.isVisible()) {
+            // set isFeaturedImage true for featured images, to include author field on media detail
+            mediaDetails = new MediaDetailPagerFragment(false, true);
+            FragmentManager supportFragmentManager = getSupportFragmentManager();
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, mediaDetails)
+                    .addToBackStack(null)
+                    .commit();
+            supportFragmentManager.executePendingTransactions();
+        }
+        Toast.makeText(this,"Click",Toast.LENGTH_SHORT).show();
+
+        mediaDetails.showImage(0);
+    }
+
+    @Override
+    protected void onResume() {
+//        toolbar.setVisibility(View.VISIBLE);
+        super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount()==1){
+            Toast.makeText(this,getSupportFragmentManager().getBackStackEntryCount()+"",Toast.LENGTH_SHORT).show();
+            toolbar.setVisibility(View.VISIBLE);
+            setToolbarVisibility(false);
+        }else {
+            toolbar.setVisibility(View.GONE);
+            setToolbarVisibility(true);
+        }
+        super.onBackPressed();
     }
 }

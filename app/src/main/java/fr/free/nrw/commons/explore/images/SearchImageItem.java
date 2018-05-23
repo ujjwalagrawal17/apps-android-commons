@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class SearchImageItem implements Parcelable {
     private final String name;
-    private boolean selected;
+    private boolean image_stored_in_history;
 
     public static Creator<SearchImageItem> CREATOR = new Creator<SearchImageItem>() {
         @Override
@@ -19,26 +19,26 @@ public class SearchImageItem implements Parcelable {
         }
     };
 
-    public SearchImageItem(String name, boolean selected) {
+    public SearchImageItem(String name, boolean image_stored_in_history) {
         this.name = name;
-        this.selected = selected;
+        this.image_stored_in_history = image_stored_in_history;
     }
 
     private SearchImageItem(Parcel in) {
         name = in.readString();
-        selected = in.readInt() == 1;
+        image_stored_in_history = in.readInt() == 1;
     }
 
     public String getName() {
         return name;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public boolean isImage_stored_in_history() {
+        return image_stored_in_history;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setImage_stored_in_history(boolean image_stored_in_history) {
+        this.image_stored_in_history = image_stored_in_history;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SearchImageItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(name);
-        parcel.writeInt(selected ? 1 : 0);
+        parcel.writeInt(image_stored_in_history ? 1 : 0);
     }
 
     @Override

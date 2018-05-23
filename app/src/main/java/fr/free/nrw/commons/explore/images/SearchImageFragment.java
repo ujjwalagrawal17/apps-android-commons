@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pedrogomez.renderers.RVRendererAdapter;
 
@@ -25,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
+import fr.free.nrw.commons.explore.SearchActivity;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -54,8 +54,8 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
     private List<SearchImageItem> selectedImages = new ArrayList<>();
 
     private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
-
-        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
+        ((SearchActivity)getContext()).onSearchImageClicked(item);
+//        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
 
     });
 
@@ -119,4 +119,9 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
                 .map(s -> new SearchImageItem(s,false));
     }
 
+    @Override
+    public void onResume() {
+        if (imagesAdapter!=null)imagesAdapter.notifyDataSetChanged();
+        super.onResume();
+    }
 }
