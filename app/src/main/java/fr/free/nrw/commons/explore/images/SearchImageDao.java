@@ -22,17 +22,17 @@ public class SearchImageDao {
     private final Provider<ContentProviderClient> clientProvider;
 
     @Inject
-    public SearchImageDao(@Named("category") Provider<ContentProviderClient> clientProvider) {
+    public SearchImageDao(@Named("image") Provider<ContentProviderClient> clientProvider) {
         this.clientProvider = clientProvider;
     }
 
-    public void save(SearchedImages searchedImages) {
+    public void save(SearchedImage searchedImage) {
         ContentProviderClient db = clientProvider.get();
         try {
-            if (searchedImages.getContentUri() == null) {
-                searchedImages.setContentUri(db.insert(SearchImageContentProvider.BASE_URI, toContentValues(searchedImages)));
+            if (searchedImage.getContentUri() == null) {
+                searchedImage.setContentUri(db.insert(SearchImageContentProvider.BASE_URI, toContentValues(searchedImage)));
             } else {
-                db.update(searchedImages.getContentUri(), toContentValues(searchedImages), null, null);
+                db.update(searchedImage.getContentUri(), toContentValues(searchedImage), null, null);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);
@@ -42,13 +42,13 @@ public class SearchImageDao {
     }
 
     /**
-     * Find persisted category in database, based on its name.
+     * Find persisted images in database, based on its name.
      *
-     * @param name Category's name
-     * @return category from database, or null if not found
+     * @param name Images's name
+     * @return image from database, or null if not found
      */
     @Nullable
-    SearchedImages find(String name) {
+    SearchedImage find(String name) {
         Cursor cursor = null;
         ContentProviderClient db = clientProvider.get();
         try {
@@ -74,9 +74,9 @@ public class SearchImageDao {
     }
 
     /**
-     * Retrieve recently-used categories, ordered by descending date.
+     * Retrieve recently-searched images, ordered by descending date.
      *
-     * @return a list containing recently searched images 
+     * @return a list containing recently searched images
      */
     @NonNull
     List<String> recentSearchedImages(int limit) {
@@ -107,9 +107,9 @@ public class SearchImageDao {
     }
 
     @NonNull
-    SearchedImages fromCursor(Cursor cursor) {
+    SearchedImage fromCursor(Cursor cursor) {
         // Hardcoding column positions!
-        return new SearchedImages(
+        return new SearchedImage(
                 SearchImageContentProvider.uriForId(cursor.getInt(cursor.getColumnIndex(Table.COLUMN_ID))),
                 cursor.getString(cursor.getColumnIndex(Table.COLUMN_NAME)),
                 new Date(cursor.getLong(cursor.getColumnIndex(Table.COLUMN_LAST_SEARCHED))),
@@ -117,11 +117,11 @@ public class SearchImageDao {
         );
     }
 
-    private ContentValues toContentValues(SearchedImages searchedImages) {
+    private ContentValues toContentValues(SearchedImage searchedImage) {
         ContentValues cv = new ContentValues();
-        cv.put(SearchImageDao.Table.COLUMN_NAME, searchedImages.getName());
-        cv.put(SearchImageDao.Table.COLUMN_LAST_SEARCHED, searchedImages.getLastUsed().getTime());
-        cv.put(SearchImageDao.Table.COLUMN_TIMES_SEARCHED, searchedImages.getTimesUsed());
+        cv.put(SearchImageDao.Table.COLUMN_NAME, searchedImage.getName());
+        cv.put(SearchImageDao.Table.COLUMN_LAST_SEARCHED, searchedImage.getLastUsed().getTime());
+        cv.put(SearchImageDao.Table.COLUMN_TIMES_SEARCHED, searchedImage.getTimesUsed());
         return cv;
     }
 

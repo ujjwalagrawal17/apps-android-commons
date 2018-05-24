@@ -7,16 +7,16 @@ import java.util.Date;
 /**
  * Represents a category
  */
-public class SearchedImages {
+public class SearchedImage {
     private Uri contentUri;
     private String name;
     private Date lastUsed;
     private int timesUsed;
 
-    public SearchedImages() {
+    public SearchedImage() {
     }
 
-    public SearchedImages(Uri contentUri, String name, Date lastUsed, int timesUsed) {
+    public SearchedImage(Uri contentUri, String name, Date lastUsed, int timesUsed) {
         this.contentUri = contentUri;
         this.name = name;
         this.lastUsed = lastUsed;

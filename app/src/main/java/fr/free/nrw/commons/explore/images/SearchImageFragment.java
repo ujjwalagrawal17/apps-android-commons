@@ -25,8 +25,6 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.category.Category;
-import fr.free.nrw.commons.category.CategoryItem;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.explore.SearchActivity;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
@@ -49,7 +47,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
     ProgressBar imageSearchInProgress;
     @BindView(R.id.imagesNotFound)
     TextView imagesNotFoundView;
-    @Inject CategoryDao categoryDao;
+    @Inject SearchImageDao searchImageDao;
 
     @Inject
     MediaWikiApi mwApi;
@@ -133,14 +131,14 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
     }
 
     private void updateCategoryCount(SearchImageItem item) {
-        Category category = categoryDao.find(item.getName());
+        SearchedImage searchedImage = searchImageDao.find(item.getName());
 
         // Newly used category...
-        if (category == null) {
-            category = new Category(null, item.getName(), new Date(), 0);
+        if (searchedImage == null) {
+            searchedImage = new SearchedImage(null, item.getName(), new Date(), 0);
         }
 
-        category.incTimesUsed();
-        categoryDao.save(category);
+        searchedImage.incTimesUsed();
+        searchImageDao.save(searchedImage);
     }
 }
