@@ -120,8 +120,8 @@ public class SearchImageDao {
     private ContentValues toContentValues(SearchedImage searchedImage) {
         ContentValues cv = new ContentValues();
         cv.put(SearchImageDao.Table.COLUMN_NAME, searchedImage.getName());
-        cv.put(SearchImageDao.Table.COLUMN_LAST_SEARCHED, searchedImage.getLastUsed().getTime());
-        cv.put(SearchImageDao.Table.COLUMN_TIMES_SEARCHED, searchedImage.getTimesUsed());
+        cv.put(SearchImageDao.Table.COLUMN_LAST_SEARCHED, searchedImage.getLastSearched().getTime());
+        cv.put(SearchImageDao.Table.COLUMN_TIMES_SEARCHED, searchedImage.getTimesSearched());
         return cv;
     }
 

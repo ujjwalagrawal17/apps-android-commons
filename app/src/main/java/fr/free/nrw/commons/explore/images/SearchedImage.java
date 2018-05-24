@@ -5,22 +5,22 @@ import android.net.Uri;
 import java.util.Date;
 
 /**
- * Represents a category
+ * Represents a recently searched image
  */
 public class SearchedImage {
     private Uri contentUri;
     private String name;
-    private Date lastUsed;
-    private int timesUsed;
+    private Date lastSearched;
+    private int timesSearched;
 
     public SearchedImage() {
     }
 
-    public SearchedImage(Uri contentUri, String name, Date lastUsed, int timesUsed) {
+    public SearchedImage(Uri contentUri, String name, Date lastSearched, int timesSearched) {
         this.contentUri = contentUri;
         this.name = name;
-        this.lastUsed = lastUsed;
-        this.timesUsed = timesUsed;
+        this.lastSearched = lastSearched;
+        this.timesSearched = timesSearched;
     }
 
     /**
@@ -35,48 +35,48 @@ public class SearchedImage {
     /**
      * Modifies name
      *
-     * @param name Category name
+     * @param name Image name
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Gets last used date
+     * Gets last searched date
      *
-     * @return Last used date
+     * @return Last searched date
      */
-    public Date getLastUsed() {
+    public Date getLastSearched() {
         // warning: Date objects are mutable.
-        return (Date)lastUsed.clone();
+        return (Date) lastSearched.clone();
     }
 
     /**
-     * Generates new last used date
+     * Generates new last searched date
      */
     private void touch() {
-        lastUsed = new Date();
+        lastSearched = new Date();
     }
 
     /**
-     * Gets no. of times the category is used
+     * Gets no. of times the images is searched
      *
-     * @return no. of times used
+     * @return no. of times searched
      */
-    public int getTimesUsed() {
-        return timesUsed;
+    public int getTimesSearched() {
+        return timesSearched;
     }
 
     /**
-     * Increments timesUsed by 1 and sets last used date as now.
+     * Increments timesSearched by 1 and sets last searched date as now.
      */
-    public void incTimesUsed() {
-        timesUsed++;
+    public void incTimesSearched() {
+        timesSearched++;
         touch();
     }
 
     /**
-     * Gets the content URI for this category
+     * Gets the content URI for this image
      *
      * @return content URI
      */
@@ -85,7 +85,7 @@ public class SearchedImage {
     }
 
     /**
-     * Modifies the content URI - marking this category as already saved in the database
+     * Modifies the content URI - marking this image as already saved in the database
      *
      * @param contentUri the content URI
      */

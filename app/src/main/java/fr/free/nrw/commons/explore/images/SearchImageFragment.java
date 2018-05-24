@@ -138,7 +138,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
             searchedImage = new SearchedImage(null, item.getName(), new Date(), 0);
         }
 
-        searchedImage.incTimesUsed();
+        searchedImage.incTimesSearched();
         searchImageDao.save(searchedImage);
     }
 }
