@@ -18,11 +18,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
-import fr.free.nrw.commons.category.Category;
 import fr.free.nrw.commons.explore.images.SearchImageFragment;
 import fr.free.nrw.commons.explore.images.SearchImageItem;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
 import fr.free.nrw.commons.theme.NavigationBaseActivity;
+import fr.free.nrw.commons.utils.ViewUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
@@ -102,6 +102,7 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
 
     public void onSearchImageClicked(SearchImageItem searchImageItem) {
         this.searchImageItem = searchImageItem;
+        ViewUtil.hideKeyboard(this.findViewById(R.id.searchBox));
         toolbar.setVisibility(View.GONE);
         setToolbarVisibility(true);
         if (mediaDetails == null || !mediaDetails.isVisible()) {
@@ -115,8 +116,6 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
                     .commit();
             supportFragmentManager.executePendingTransactions();
         }
-        Toast.makeText(this,"Click",Toast.LENGTH_SHORT).show();
-
         mediaDetails.showImage(0);
     }
 
@@ -129,7 +128,7 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount()==1){
-            Toast.makeText(this,getSupportFragmentManager().getBackStackEntryCount()+"",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this,getSupportFragmentManager().getBackStackEntryCount()+"",Toast.LENGTH_SHORT).show();
             toolbar.setVisibility(View.VISIBLE);
             setToolbarVisibility(false);
         }else {

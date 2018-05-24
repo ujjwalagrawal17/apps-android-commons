@@ -44,10 +44,6 @@ public class ExploreActivity extends NavigationBaseActivity
         // reference to the Fragment from FragmentManager, using findFragmentById()
         supportFragmentManager = getSupportFragmentManager();
         setCategoryImagesFragment();
-        if (savedInstanceState != null) {
-            mediaDetails = (MediaDetailPagerFragment) supportFragmentManager.findFragmentById(R.id.fragmentContainer);
-
-        }
         initDrawer();
         setTitle(R.string.title_activity_explore);
     }

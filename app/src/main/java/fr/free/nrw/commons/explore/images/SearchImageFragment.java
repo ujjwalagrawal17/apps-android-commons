@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pedrogomez.renderers.RVRendererAdapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,6 +25,8 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.category.Category;
+import fr.free.nrw.commons.category.CategoryItem;
 import fr.free.nrw.commons.di.CommonsDaggerSupportFragment;
 import fr.free.nrw.commons.explore.SearchActivity;
 import fr.free.nrw.commons.mwapi.MediaWikiApi;
@@ -45,6 +49,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
     ProgressBar imageSearchInProgress;
     @BindView(R.id.imagesNotFound)
     TextView imagesNotFoundView;
+    @Inject CategoryDao categoryDao;
 
     @Inject
     MediaWikiApi mwApi;
@@ -55,6 +60,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
         ((SearchActivity)getContext()).onSearchImageClicked(item);
+//        imagesAdapter.getPosi
 //        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
 
     });
@@ -121,7 +127,20 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     @Override
     public void onResume() {
+        Toast.makeText(getContext(),"qwertyui",Toast.LENGTH_SHORT).show();
         if (imagesAdapter!=null)imagesAdapter.notifyDataSetChanged();
         super.onResume();
+    }
+
+    private void updateCategoryCount(SearchImageItem item) {
+        Category category = categoryDao.find(item.getName());
+
+        // Newly used category...
+        if (category == null) {
+            category = new Category(null, item.getName(), new Date(), 0);
+        }
+
+        category.incTimesUsed();
+        categoryDao.save(category);
     }
 }
