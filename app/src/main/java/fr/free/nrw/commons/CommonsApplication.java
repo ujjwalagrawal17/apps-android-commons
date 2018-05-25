@@ -26,6 +26,7 @@ import fr.free.nrw.commons.category.CategoryDao;
 import fr.free.nrw.commons.contributions.ContributionDao;
 import fr.free.nrw.commons.data.DBOpenHelper;
 import fr.free.nrw.commons.di.ApplicationlessInjection;
+import fr.free.nrw.commons.explore.images.SearchImageDao;
 import fr.free.nrw.commons.modifications.ModifierSequenceDao;
 import fr.free.nrw.commons.utils.FileUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -160,6 +161,7 @@ public class CommonsApplication extends MultiDexApplication {
 
         ModifierSequenceDao.Table.onDelete(db);
         CategoryDao.Table.onDelete(db);
+        SearchImageDao.Table.onDelete(db);
         ContributionDao.Table.onDelete(db);
     }
 

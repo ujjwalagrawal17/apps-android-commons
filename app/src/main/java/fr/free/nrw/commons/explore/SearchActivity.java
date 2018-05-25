@@ -3,6 +3,7 @@ package fr.free.nrw.commons.explore;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -58,20 +59,22 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
                 .subscribe( query -> {
                         //update image list
                             if (!TextUtils.isEmpty(query)) {
-                                showPanel(PANEL_RECENT_SEARCHES);
+//                                showPanel(PANEL_RECENT_SEARCHES);
+                                searchImageFragment.updateImageList(query.toString());
                             }else {
-                                showPanel(PANEL_SEARCH_RESULTS);
+//                                showPanel(PANEL_SEARCH_RESULTS);
                             }
-                            searchImageFragment.updateImageList(query.toString());
                         }
                 );
     }
 
 
     private void setBrowseImagesFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        searchImageFragment = (SearchImageFragment) fragmentManager.findFragmentById(R.id.search_panel_recent);
-        searchHistoryFragment = (SearchHistoryFragment) fragmentManager.findFragmentById(R.id.search_panel_recent);
+        searchImageFragment = new SearchImageFragment();
+        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
+        transaction.add(R.id.fragmentContainer, searchImageFragment).commit();
+//        searchImageFragment = (SearchImageFragment) fragmentManager.findFragmentById(R.id.fragmentContainer);
+//        searchHistoryFragment = (SearchHistoryFragment) fragmentManager.findFragmentById(R.id.search_panel_recent);
     }
 
     @Override
@@ -146,28 +149,28 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
         super.onBackPressed();
     }
 
-    /**
-     * Show a particular panel, which can be one of:
-     * - PANEL_RECENT_SEARCHES
-     * - PANEL_SEARCH_RESULTS
-     * Automatically hides the previous panel.
-     *
-     * @param panel Which panel to show.
-     */
-    private void showPanel(int panel) {
-        switch (panel) {
-            case PANEL_RECENT_SEARCHES:
-                searchImageFragment.hide();
-                searchHistoryFragment.show();
-                break;
-            case PANEL_SEARCH_RESULTS:
-                searchHistoryFragment.hide();
-                searchImageFragment.show();
-                break;
-            default:
-                break;
-        }
-    }
+//    /**
+//     * Show a particular panel, which can be one of:
+//     * - PANEL_RECENT_SEARCHES
+//     * - PANEL_SEARCH_RESULTS
+//     * Automatically hides the previous panel.
+//     *
+//     * @param panel Which panel to show.
+//     */
+//    private void showPanel(int panel) {
+//        switch (panel) {
+//            case PANEL_RECENT_SEARCHES:
+//                searchImageFragment.hide();
+//                searchHistoryFragment.show();
+//                break;
+//            case PANEL_SEARCH_RESULTS:
+//                searchHistoryFragment.hide();
+//                searchImageFragment.show();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     private int getActivePanel() {
         if (searchImageFragment.isShowing()) {

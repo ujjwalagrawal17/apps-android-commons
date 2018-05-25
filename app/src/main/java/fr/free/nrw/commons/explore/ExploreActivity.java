@@ -2,14 +2,22 @@ package fr.free.nrw.commons.explore;
 
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
@@ -29,11 +37,19 @@ public class ExploreActivity extends NavigationBaseActivity
                     AdapterView.OnItemClickListener{
 
 
-//    private static final String FEATURED_IMAGES_CATEGORY = "Category:Featured_pictures_on_Wikimedia_Commons";
-    private static final String FEATURED_IMAGES_CATEGORY = "Category:Pictures_of_the_day_(2018)";
+    private static final String FEATURED_IMAGES_CATEGORY = "Category:Featured_pictures_on_Wikimedia_Commons";
+    private static final String POTD_CATEGORY = "Category:Pictures_of_the_day_(2018)";
     private FragmentManager supportFragmentManager;
-    private CategoryImagesListFragment categoryImagesListFragment;
+    private CategoryImagesListFragment featuredImagesFragment;
+    private CategoryImagesListFragment pictureOfTheDayFragment;
     private MediaDetailPagerFragment mediaDetails;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
+    ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +60,49 @@ public class ExploreActivity extends NavigationBaseActivity
         // Activity can call methods in the fragment by acquiring a
         // reference to the Fragment from FragmentManager, using findFragmentById()
         supportFragmentManager = getSupportFragmentManager();
-        setCategoryImagesFragment();
+//        setCategoryImagesFragment();
         initDrawer();
         setTitle(R.string.title_activity_explore);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        setTabs();
     }
 
-    /**
-     * Gets the categoryName from the intent and initializes the fragment for showing images of that category
-     */
-    private void setCategoryImagesFragment() {
-        categoryImagesListFragment = new CategoryImagesListFragment();
+    public void setTabs() {
+        List<Fragment> fragmentList = new ArrayList<>();
+        List<String> titleList = new ArrayList<>();
+
+        pictureOfTheDayFragment = new CategoryImagesListFragment();
+        Bundle pictureOfTheDayArguments = new Bundle();
+        pictureOfTheDayArguments.putString("categoryName", POTD_CATEGORY);
+        pictureOfTheDayFragment.setArguments(pictureOfTheDayArguments);
+
+        featuredImagesFragment = new CategoryImagesListFragment();
         Bundle arguments = new Bundle();
         arguments.putString("categoryName", FEATURED_IMAGES_CATEGORY);
-        categoryImagesListFragment.setArguments(arguments);
-        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
-        transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
+        featuredImagesFragment.setArguments(arguments);
+        fragmentList.add(featuredImagesFragment);
+        titleList.add(getResources().getString(R.string.title_activity_featured_images));
+        fragmentList.add(pictureOfTheDayFragment);
+        titleList.add(getResources().getString(R.string.title_picture_of_the_day));
+
+        viewPagerAdapter.setTabData(fragmentList, titleList);
+        viewPagerAdapter.notifyDataSetChanged();
     }
+
+//    /**
+//     * Gets the categoryName from the intent and initializes the fragment for showing images of that category
+//     */
+//    private void setCategoryImagesFragment() {
+//        categoryImagesListFragment = new CategoryImagesListFragment();
+//        Bundle arguments = new Bundle();
+//        arguments.putString("categoryName", FEATURED_IMAGES_CATEGORY);
+//        categoryImagesListFragment.setArguments(arguments);
+//        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
+//        transaction.add(R.id.fragmentContainer, categoryImagesListFragment).commit();
+//    }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -79,20 +122,20 @@ public class ExploreActivity extends NavigationBaseActivity
 
     @Override
     public Media getMediaAtPosition(int i) {
-        if (categoryImagesListFragment.getAdapter() == null) {
+        if (featuredImagesFragment.getAdapter() == null) {
             // not yet ready to return data
             return null;
         } else {
-            return (Media) categoryImagesListFragment.getAdapter().getItem(i);
+            return (Media) featuredImagesFragment.getAdapter().getItem(i);
         }
     }
 
     @Override
     public int getTotalMediaCount() {
-        if (categoryImagesListFragment.getAdapter() == null) {
+        if (featuredImagesFragment.getAdapter() == null) {
             return 0;
         }
-        return categoryImagesListFragment.getAdapter().getCount();
+        return featuredImagesFragment.getAdapter().getCount();
     }
 
     @Override

@@ -163,20 +163,20 @@ public class SearchImageDao {
             if (from == to) {
                 return;
             }
-            if (from < 6) {
+            if (from < 4) {
                 // doesn't exist yet
                 from++;
                 onUpdate(db, from, to);
                 return;
             }
-            if (from == 6) {
-                // table added in version 5
+            if (from == 4) {
+                // table added in version 6
                 onCreate(db);
                 from++;
                 onUpdate(db, from, to);
                 return;
             }
-            if (from == 7) {
+            if (from == 5) {
                 from++;
                 onUpdate(db, from, to);
                 return;

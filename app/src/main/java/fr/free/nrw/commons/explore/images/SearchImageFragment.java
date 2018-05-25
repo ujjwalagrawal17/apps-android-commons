@@ -59,7 +59,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
         ((SearchActivity)getContext()).onSearchImageClicked(item);
-        updateImagesHistory(item);
+//        updateImagesHistory(item);
 //        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
 
     });

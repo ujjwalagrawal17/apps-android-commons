@@ -48,15 +48,15 @@
             >
         </FrameLayout>
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/search_panel_recent"
-            android:orientation="horizontal"
-            android:layout_below="@id/toolbar_layout"
-            >
+        <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/search_panel_recent"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_below="@id/toolbar_layout"-->
+            <!--&gt;-->
 
-        </FrameLayout>
+        <!--</FrameLayout>-->
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
