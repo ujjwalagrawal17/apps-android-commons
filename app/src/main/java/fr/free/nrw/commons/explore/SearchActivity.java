@@ -3,11 +3,10 @@ package fr.free.nrw.commons.explore;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -18,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.free.nrw.commons.Media;
 import fr.free.nrw.commons.R;
+import fr.free.nrw.commons.explore.images.SearchHistoryFragment;
 import fr.free.nrw.commons.explore.images.SearchImageFragment;
 import fr.free.nrw.commons.explore.images.SearchImageItem;
 import fr.free.nrw.commons.media.MediaDetailPagerFragment;
@@ -35,9 +35,13 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
     @BindView(R.id.searchBox) EditText etSearchKeyword;
 
     private SearchImageFragment searchImageFragment;
+    private SearchHistoryFragment searchHistoryFragment;
     private FragmentManager supportFragmentManager;
     private MediaDetailPagerFragment mediaDetails;
     SearchImageItem searchImageItem;
+    private static final int PANEL_RECENT_SEARCHES = 0;
+    private static final int PANEL_SEARCH_RESULTS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +55,24 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
                 .takeUntil(RxView.detaches(etSearchKeyword))
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( filter -> {
+                .subscribe( query -> {
                         //update image list
-                            searchImageFragment.updateImageList(filter.toString());
+                            if (!TextUtils.isEmpty(query)) {
+                                showPanel(PANEL_RECENT_SEARCHES);
+                            }else {
+                                showPanel(PANEL_SEARCH_RESULTS);
+                            }
+                            searchImageFragment.updateImageList(query.toString());
                         }
                 );
     }
 
 
     private void setBrowseImagesFragment() {
-        searchImageFragment = new SearchImageFragment();
-        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
-        transaction .add(R.id.fragmentContainer, searchImageFragment).commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        searchImageFragment = (SearchImageFragment) fragmentManager.findFragmentById(R.id.search_panel_recent);
+        searchHistoryFragment = (SearchHistoryFragment) fragmentManager.findFragmentById(R.id.search_panel_recent);
     }
-
 
     @Override
     public Media getMediaAtPosition(int i) {
@@ -136,5 +144,37 @@ public class SearchActivity extends NavigationBaseActivity implements MediaDetai
             setToolbarVisibility(true);
         }
         super.onBackPressed();
+    }
+
+    /**
+     * Show a particular panel, which can be one of:
+     * - PANEL_RECENT_SEARCHES
+     * - PANEL_SEARCH_RESULTS
+     * Automatically hides the previous panel.
+     *
+     * @param panel Which panel to show.
+     */
+    private void showPanel(int panel) {
+        switch (panel) {
+            case PANEL_RECENT_SEARCHES:
+                searchImageFragment.hide();
+                searchHistoryFragment.show();
+                break;
+            case PANEL_SEARCH_RESULTS:
+                searchHistoryFragment.hide();
+                searchImageFragment.show();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private int getActivePanel() {
+        if (searchImageFragment.isShowing()) {
+            return PANEL_SEARCH_RESULTS;
+        } else {
+            //otherwise, the recent searches must be showing:
+            return PANEL_RECENT_SEARCHES;
+        }
     }
 }

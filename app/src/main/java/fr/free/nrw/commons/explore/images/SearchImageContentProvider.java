@@ -16,25 +16,25 @@ import fr.free.nrw.commons.di.CommonsDaggerContentProvider;
 import timber.log.Timber;
 
 import static android.content.UriMatcher.NO_MATCH;
-import static fr.free.nrw.commons.category.CategoryDao.Table.ALL_FIELDS;
-import static fr.free.nrw.commons.category.CategoryDao.Table.COLUMN_ID;
-import static fr.free.nrw.commons.category.CategoryDao.Table.TABLE_NAME;
+import static fr.free.nrw.commons.explore.images.SearchImageDao.Table.ALL_FIELDS;
+import static fr.free.nrw.commons.explore.images.SearchImageDao.Table.COLUMN_ID;
+import static fr.free.nrw.commons.explore.images.SearchImageDao.Table.TABLE_NAME;
 
 public class SearchImageContentProvider extends CommonsDaggerContentProvider {
 
-    public static final String AUTHORITY = "fr.free.nrw.commons.categories.contentprovider";
+    public static final String AUTHORITY = "fr.free.nrw.commons.explore.images.contentprovider";
     // For URI matcher
-    private static final int CATEGORIES = 1;
-    private static final int CATEGORIES_ID = 2;
-    private static final String BASE_PATH = "categories";
+    private static final int SEARCHED_IMAGE = 1;
+    private static final int SEARCHED_IMAGE_ID = 2;
+    private static final String BASE_PATH = "searched_image";
 
     public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
     private static final UriMatcher uriMatcher = new UriMatcher(NO_MATCH);
 
     static {
-        uriMatcher.addURI(AUTHORITY, BASE_PATH, CATEGORIES);
-        uriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", CATEGORIES_ID);
+        uriMatcher.addURI(AUTHORITY, BASE_PATH, SEARCHED_IMAGE);
+        uriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", SEARCHED_IMAGE_ID);
     }
 
     public static Uri uriForId(int id) {
@@ -56,11 +56,11 @@ public class SearchImageContentProvider extends CommonsDaggerContentProvider {
         Cursor cursor;
 
         switch (uriType) {
-            case CATEGORIES:
+            case SEARCHED_IMAGE:
                 cursor = queryBuilder.query(db, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
-            case CATEGORIES_ID:
+            case SEARCHED_IMAGE_ID:
                 cursor = queryBuilder.query(db,
                         ALL_FIELDS,
                         "_id = ?",
@@ -91,7 +91,7 @@ public class SearchImageContentProvider extends CommonsDaggerContentProvider {
         SQLiteDatabase sqlDB = dbOpenHelper.getWritableDatabase();
         long id;
         switch (uriType) {
-            case CATEGORIES:
+            case SEARCHED_IMAGE:
                 id = sqlDB.insert(TABLE_NAME, null, contentValues);
                 break;
             default:
@@ -109,12 +109,12 @@ public class SearchImageContentProvider extends CommonsDaggerContentProvider {
     @SuppressWarnings("ConstantConditions")
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        Timber.d("Hello, bulk insert! (CategoryContentProvider)");
+        Timber.d("Hello, bulk insert! (SearchImageContentProvider)");
         int uriType = uriMatcher.match(uri);
         SQLiteDatabase sqlDB = dbOpenHelper.getWritableDatabase();
         sqlDB.beginTransaction();
         switch (uriType) {
-            case CATEGORIES:
+            case SEARCHED_IMAGE:
                 for (ContentValues value : values) {
                     Timber.d("Inserting! %s", value);
                     sqlDB.insert(TABLE_NAME, null, value);
@@ -146,7 +146,7 @@ public class SearchImageContentProvider extends CommonsDaggerContentProvider {
         SQLiteDatabase sqlDB = dbOpenHelper.getWritableDatabase();
         int rowsUpdated;
         switch (uriType) {
-            case CATEGORIES_ID:
+            case SEARCHED_IMAGE_ID:
                 if (TextUtils.isEmpty(selection)) {
                     int id = Integer.valueOf(uri.getLastPathSegment());
                     rowsUpdated = sqlDB.update(TABLE_NAME,

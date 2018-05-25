@@ -22,7 +22,7 @@ public class SearchImageDao {
     private final Provider<ContentProviderClient> clientProvider;
 
     @Inject
-    public SearchImageDao(@Named("image") Provider<ContentProviderClient> clientProvider) {
+    public SearchImageDao(@Named("searched_image") Provider<ContentProviderClient> clientProvider) {
         this.clientProvider = clientProvider;
     }
 
@@ -163,20 +163,20 @@ public class SearchImageDao {
             if (from == to) {
                 return;
             }
-            if (from < 4) {
+            if (from < 6) {
                 // doesn't exist yet
                 from++;
                 onUpdate(db, from, to);
                 return;
             }
-            if (from == 4) {
+            if (from == 6) {
                 // table added in version 5
                 onCreate(db);
                 from++;
                 onUpdate(db, from, to);
                 return;
             }
-            if (from == 5) {
+            if (from == 7) {
                 from++;
                 onUpdate(db, from, to);
                 return;

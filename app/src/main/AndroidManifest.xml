@@ -155,13 +155,13 @@
             android:exported="false"
             android:label="@string/provider_categories"
             android:syncable="false" />
+
         <provider
-            android:name=".explore.SearchImageContentProvider"
-            android:authorities="fr.free.nrw.commons.explore.contentprovider"
+            android:name=".explore.images.SearchImageContentProvider"
+            android:authorities="fr.free.nrw.commons.explore.images.contentprovider"
             android:exported="false"
             android:label="@string/provider_search_images"
             android:syncable="false" />
-
         <activity android:name=".explore.SearchActivity" />
         <activity android:name=".explore.ExploreActivity" />
     </application>

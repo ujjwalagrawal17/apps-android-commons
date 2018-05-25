@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pedrogomez.renderers.RVRendererAdapter;
 
@@ -48,17 +47,19 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
     @BindView(R.id.imagesNotFound)
     TextView imagesNotFoundView;
     @Inject SearchImageDao searchImageDao;
+    @BindView(R.id.image_search_results_display) View searchResultsDisplay;
 
     @Inject
     MediaWikiApi mwApi;
     @Inject @Named("default_preferences") SharedPreferences prefs;
 
+//    private RVRendererAdapter<SearchImageItem> imagesAdapter;
     private RVRendererAdapter<SearchImageItem> imagesAdapter;
     private List<SearchImageItem> selectedImages = new ArrayList<>();
 
     private final SearchImagesAdapterFactory adapterFactory = new SearchImagesAdapterFactory(item -> {
         ((SearchActivity)getContext()).onSearchImageClicked(item);
-//        imagesAdapter.getPosi
+        updateImagesHistory(item);
 //        Toast.makeText(getContext(),"Add images to recently searched images db table and move to Media Details Fragment ",Toast.LENGTH_LONG).show();
 
     });
@@ -103,6 +104,7 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
                             if (imagesAdapter.getItemCount() == selectedImages.size()) {
                                 if (TextUtils.isEmpty(filter)) {
+                                    imagesAdapter.clear();
 
                                 } else {
                                     imagesNotFoundView.setText(getString(R.string.images_not_found, filter));
@@ -125,15 +127,14 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
 
     @Override
     public void onResume() {
-        Toast.makeText(getContext(),"qwertyui",Toast.LENGTH_SHORT).show();
         if (imagesAdapter!=null)imagesAdapter.notifyDataSetChanged();
         super.onResume();
     }
 
-    private void updateCategoryCount(SearchImageItem item) {
+    private void updateImagesHistory(SearchImageItem item) {
         SearchedImage searchedImage = searchImageDao.find(item.getName());
 
-        // Newly used category...
+        // Newly searched images...
         if (searchedImage == null) {
             searchedImage = new SearchedImage(null, item.getName(), new Date(), 0);
         }
@@ -141,4 +142,16 @@ public class SearchImageFragment extends CommonsDaggerSupportFragment {
         searchedImage.incTimesSearched();
         searchImageDao.save(searchedImage);
     }
+
+    public void show() {
+        searchResultsDisplay.setVisibility(View.VISIBLE);
+    }
+
+    public void hide() {
+        searchResultsDisplay.setVisibility(View.GONE);
+    }
+    public boolean isShowing() {
+        return searchResultsDisplay.getVisibility() == View.VISIBLE;
+    }
+
 }

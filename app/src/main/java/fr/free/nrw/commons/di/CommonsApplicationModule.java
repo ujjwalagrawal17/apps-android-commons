@@ -33,6 +33,7 @@ import static fr.free.nrw.commons.modifications.ModificationsContentProvider.MOD
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class CommonsApplicationModule {
     public static final String CATEGORY_AUTHORITY = "fr.free.nrw.commons.categories.contentprovider";
+    public static final String SEARCHED_IMAGE_AUTHORITY = "fr.free.nrw.commons.explore.images.contentprovider";
     public static final long OK_HTTP_CACHE_SIZE = 10 * 1024 * 1024;
 
     private Context applicationContext;
@@ -55,6 +56,12 @@ public class CommonsApplicationModule {
     @Named("category")
     public ContentProviderClient provideCategoryContentProviderClient(Context context) {
         return context.getContentResolver().acquireContentProviderClient(CATEGORY_AUTHORITY);
+    }
+
+    @Provides
+    @Named("searched_image")
+    public ContentProviderClient provideSearchedImageContentProviderClient(Context context) {
+        return context.getContentResolver().acquireContentProviderClient(SEARCHED_IMAGE_AUTHORITY);
     }
 
     @Provides
