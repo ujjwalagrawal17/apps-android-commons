@@ -14,12 +14,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/featured_image_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_title_indicator_title_padding"
+            android:textColor="@color/primaryDarkColor"
+            android:layout_below="@id/toolbar"
+            android:text="@string/title_activity_featured_images"
+            android:textSize="@dimen/normal_text"
+            android:textStyle="bold"
+            />
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fragmentContainer"
             android:orientation="horizontal"
-            android:layout_below="@id/toolbar">
+            android:layout_below="@id/featured_image_text">
 
         </FrameLayout>
     </RelativeLayout>

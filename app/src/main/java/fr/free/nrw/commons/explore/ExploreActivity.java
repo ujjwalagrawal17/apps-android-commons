@@ -29,7 +29,8 @@ public class ExploreActivity extends NavigationBaseActivity
                     AdapterView.OnItemClickListener{
 
 
-    private static final String FEATURED_IMAGES_CATEGORY = "Category:Featured_pictures_on_Wikimedia_Commons";
+//    private static final String FEATURED_IMAGES_CATEGORY = "Category:Featured_pictures_on_Wikimedia_Commons";
+    private static final String FEATURED_IMAGES_CATEGORY = "Category:Pictures_of_the_day_(2018)";
     private FragmentManager supportFragmentManager;
     private CategoryImagesListFragment categoryImagesListFragment;
     private MediaDetailPagerFragment mediaDetails;
