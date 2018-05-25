@@ -208,7 +208,7 @@
 - New feature: List of nearby places without photos
 
 ## v1.26
-- Fixed bug with overwriting files when multiple images image_stored_in_history
+- Fixed bug with overwriting files when multiple images selected
 
 ## v1.25
 - Added in-app signup feature for new users
