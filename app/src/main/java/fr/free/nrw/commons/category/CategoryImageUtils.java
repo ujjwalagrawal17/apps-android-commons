@@ -47,6 +47,17 @@ public class CategoryImageUtils {
         return subCategories;
     }
 
+    public static List<String> getPagesInCategory(NodeList childNodes) {
+        List<String> pages = new ArrayList<>();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (!getMediaFromPage(node).getFilename().substring(0,9).equals("Category:") && !getMediaFromPage(node).getFilename().substring(0,5).equals("File:")){
+                pages.add(getMediaFromPage(node).getFilename());
+            }
+        }
+        return pages;
+    }
+
     /**
      * Creates a new Media object from the XML response as received by the API
      * @param node

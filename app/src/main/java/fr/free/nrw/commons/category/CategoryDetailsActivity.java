@@ -44,6 +44,7 @@ public class CategoryDetailsActivity extends NavigationBaseActivity
     private FragmentManager supportFragmentManager;
     private CategoryImagesListFragment categoryImagesListFragment;
     private SubCategoryListFragment subCategoryListFragment;
+    private CategoryPageListFragment categoryPageListFragment;
     private MediaDetailPagerFragment mediaDetails;
     private String categoryName;
     @BindView(R.id.mediaContainer) FrameLayout mediaContainer;
@@ -72,17 +73,21 @@ public class CategoryDetailsActivity extends NavigationBaseActivity
         List<String> titleList = new ArrayList<>();
         categoryImagesListFragment = new CategoryImagesListFragment();
         subCategoryListFragment = new SubCategoryListFragment();
+        categoryPageListFragment = new CategoryPageListFragment();
         categoryName = getIntent().getStringExtra("categoryName");
         if (getIntent() != null && categoryName != null) {
             Bundle arguments = new Bundle();
             arguments.putString("categoryName", categoryName);
             categoryImagesListFragment.setArguments(arguments);
             subCategoryListFragment.setArguments(arguments);
+            categoryPageListFragment.setArguments(arguments);
         }
         fragmentList.add(categoryImagesListFragment);
         titleList.add("MEDIA");
         fragmentList.add(subCategoryListFragment);
         titleList.add("CATEGORIES");
+        fragmentList.add(categoryPageListFragment);
+        titleList.add("PAGES");
         viewPagerAdapter.setTabData(fragmentList, titleList);
         viewPagerAdapter.notifyDataSetChanged();
 

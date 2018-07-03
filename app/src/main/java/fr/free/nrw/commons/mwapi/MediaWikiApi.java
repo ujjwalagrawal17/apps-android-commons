@@ -43,6 +43,8 @@ public interface MediaWikiApi {
 
     List<String> getSubCategoryList(String categoryName);
 
+    List<String> getPagesInCategory(String categoryName);
+
     @NonNull
     List<Media> searchImages(String title, int offset);
 
