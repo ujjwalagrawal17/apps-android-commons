@@ -1,12 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tvName"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:checkMark="?android:attr/textCheckMark"
-    android:checked="false"
-    android:gravity="center_vertical"
-    android:padding="@dimen/tiny_gap"
-    android:theme="@style/DarkAppTheme">
+<!--<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--android:id="@+id/tvName"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:checkMark="?android:attr/textCheckMark"-->
+<!--android:checked="false"-->
+<!--android:gravity="center_vertical"-->
+<!--android:padding="@dimen/tiny_gap"-->
+<!--android:theme="@style/DarkAppTheme">-->
 
-</CheckedTextView>
+<!--</CheckedTextView>-->
+<RelativeLayout
+    android:id="@+id/parentLayout"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/viewMoreIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_zoom_in_primary_dark_24dp"
+        android:paddingTop="@dimen/standard_gap"
+        android:paddingBottom="@dimen/standard_gap"
+        android:paddingLeft="@dimen/standard_gap"
+        />
+    <TextView android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_toRightOf="@+id/viewMoreIcon"
+        android:background="@color/item_white_background"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:padding="@dimen/standard_gap"
+        android:text="Category Name"
+        android:textColor="@color/black"
+        xmlns:android="http://schemas.android.com/apk/res/android" />
+
+    <CheckBox
+        android:id="@+id/categoryCheckbox"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="@dimen/standard_gap"
+        android:paddingBottom="@dimen/standard_gap"
+        android:paddingRight="@dimen/small_gap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+</RelativeLayout>

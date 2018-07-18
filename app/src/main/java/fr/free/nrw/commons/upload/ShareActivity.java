@@ -155,10 +155,12 @@ public class ShareActivity
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_PERM_ON_SUBMIT_STORAGE);
             } else {
-                uploadBegins();
+                showPostUpload();
+//                uploadBegins();
             }
         } else {
-            uploadBegins();
+            showPostUpload();
+//            uploadBegins();
         }
     }
 
@@ -417,7 +419,8 @@ public class ShareActivity
                     checkIfFileExists();
 
                     //Uploading only begins if storage permission granted from arrow icon
-                    uploadBegins();
+                    showPostUpload();
+                    //                    uploadBegins();
                     snackbar.dismiss();
                 }
             }

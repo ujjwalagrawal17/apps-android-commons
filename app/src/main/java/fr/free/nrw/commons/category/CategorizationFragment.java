@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -89,6 +90,8 @@ public class CategorizationFragment extends CommonsDaggerSupportFragment {
         } else {
             selectedCategories.remove(item);
         }
+    }, item -> {
+        Toast.makeText(getContext(), "View More", Toast.LENGTH_SHORT).show();
     });
 
     @Override
